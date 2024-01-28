@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { useState } from "react";
 import styled from "styled-components";
-import loginimage from "../../assets/login.png";
+// import loginimage from "../../assets/login.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");

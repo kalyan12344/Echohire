@@ -1,0 +1,74 @@
+.signup-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: grey;
+}
+
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom-right-radius: 30px;
+  border-top-left-radius: 30px;
+  height: 500px;
+  width: 700px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.164) 1px 5px 10px;
+  /* padding: 20px; */
+}
+
+.employer-form {
+  padding: 20px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  width: 600px;
+  padding: 20px;
+  background-color: #ffffff;
+  margin-bottom: 20px;
+  border-radius: 30px;
+}
+
+.employer-page,
+js-page {
+  display: flex;
+}
+
+.company-type {
+  transform: translateX(50px);
+}
+
+.active {
+  background-color: rgba(174, 0, 255, 0.753);
+  transition: 0.0001s ease;
+}
+
+.sliding-buttons {
+  font-size: 1.3em;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: none;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.479);
+}
+
+.sliding-buttons:hover {
+  cursor: pointer;
+}
+
+.sliding-buttons:active {
+  transform: scale(0.9);
+}

@@ -5,7 +5,7 @@ import Signup from "./frontend/components/signup";
 const App = () => {
   return (
     <div>
-      {/* <Login></Login> */}
+      <Login></Login>
       <Signup></Signup>
     </div>
   );

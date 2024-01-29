@@ -6,18 +6,20 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { useState } from "react";
 import styled from "styled-components";
 // import loginimage from "../../assets/login.png";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     console.log(email, password);
   };
 
-  const handleEnter = (e) => {
-    console.log(e);
+  const handleSignup = () => {
+    navigate(`/Signup`);
   };
   useEffect(() => {
     console.log("Email:", email, "Password:", password);
@@ -44,7 +46,7 @@ const Login = () => {
         <div className="login-form">
           <h2 className="title">Login</h2>
           <TextField
-            id="standard-basic"
+            id="email"
             label="Email"
             variant="standard"
             value={email}
@@ -55,7 +57,7 @@ const Login = () => {
             }}
           />
           <TextField
-            id="standard-basic"
+            id="password"
             label="Password"
             variant="standard"
             type="password"
@@ -77,7 +79,10 @@ const Login = () => {
           </Button>
           <div>
             <p>
-              not a member?<button className="signup">Signup</button>
+              not a member?
+              <button className="signup" onClick={handleSignup}>
+                Signup
+              </button>
             </p>
           </div>{" "}
         </div>

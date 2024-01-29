@@ -1,11 +1,11 @@
 .signup-page {
-  width: 100vw;
-  height: 100vh;
+  /* width: 100vw;
+  height: 100vh; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: grey;
+  background-color: rgb(122, 116, 116);
 }
 
 .signup-container {
@@ -14,7 +14,7 @@
   align-items: center;
   border-bottom-right-radius: 30px;
   border-top-left-radius: 30px;
-  height: 500px;
+  /* height: 500px; */
   width: 700px;
   background-color: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.164) 1px 5px 10px;
@@ -71,4 +71,16 @@ js-page {
 
 .sliding-buttons:active {
   transform: scale(0.9);
+}
+.login {
+  margin-left: 3px;
+  font-size: 1.1em;
+  background-color: white;
+  transition: 1s ease;
+  color: blue;
+  border: none;
+}
+
+.login:hover {
+  cursor: pointer;
 }

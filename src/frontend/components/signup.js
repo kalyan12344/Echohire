@@ -1,20 +1,81 @@
 import { Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styling/signup.css";
 import Autocomplete from "@mui/material/Autocomplete";
 import employerSignup from "../../assets/employer_signup.png";
-import { Translate } from "@mui/icons-material";
 import employer from "../../assets/employer.jpeg";
 import js from "../../assets/job_seeker.jpeg";
+import { useNavigate } from "react-router-dom";
+import InputAdornment from "@mui/material/InputAdornment";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const EmployerSignupForm = () => {
+  const navigate = useNavigate();
   const industries = [
-    { id: 1, name: "Technology" },
-    { id: 2, name: "Finance" },
-    { id: 3, name: "Healthcare" },
-    { id: 4, name: "Education" },
-    { id: 5, name: "Manufacturing" },
+    // { label: "Technology", value: "Technology" },
+    // { label: "Finance", value: "Finance" },
+    // { label: "Healthcare", value: "Healthcare" },
+    // { label: "Education", value: "Education" },
+    // { label: "Manufacturing", value: "Manufacturing" },
+    "Technology",
+    "Finance",
+    "Healthcare",
+    "Education",
+    "Manufacturing",
   ];
+
+  const [employerDetails, setEmployerDetails] = useState({
+    companyName: "",
+    companyType: "",
+    companyDescription: "",
+    companyEmail: "",
+    companyPassword: "",
+  });
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [password, setPassword] = useState("");
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordSame, setIsPasswordSame] = useState(true);
+
+  const validateEmail = () => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(employerDetails.companyEmail);
+    setIsValidEmail(isValid);
+  };
+
+  const validatePassword = () => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasDigit = /\d/.test(password);
+
+    const isValid =
+      password.length >= minLength && hasUpperCase && hasLowerCase && hasDigit;
+
+    setIsValidPassword(isValid);
+  };
+
+  const samePassword = () => {
+    if (password === confirmPassword) {
+      setIsPasswordSame(true);
+    } else {
+      setIsPasswordSame(false);
+    }
+  };
+
+  const handleLogin = () => {
+    navigate(`/`);
+  };
+
+  const handleEmployerSignUP = () => {
+    console.log(employerDetails);
+  };
+
   return (
     <div className="employer-page">
       <div className="employer-sideimg"></div>
@@ -23,17 +84,27 @@ const EmployerSignupForm = () => {
           id="company-name"
           label="Company Name"
           variant="standard"
-          //   value={
+          value={employerDetails.companyName}
+          onChange={(e) => {
+            setEmployerDetails({
+              ...employerDetails,
+              companyName: e.target.value,
+            });
+          }}
           sx={{ width: "230px" }}
         />
         <Autocomplete
           className="company-type"
-          disablePortal
           id="company-type"
-          options={industries.map((industry) => ({
-            label: industry.name,
-            value: industry.id,
-          }))}
+          options={industries}
+          value={employerDetails.companyType}
+          onChange={(event, newValue) => {
+            console.log("Input changed:", newValue);
+            setEmployerDetails({
+              ...employerDetails,
+              companyType: newValue,
+            });
+          }}
           sx={{ width: "330px" }}
           renderInput={(params) => (
             <TextField
@@ -51,39 +122,109 @@ const EmployerSignupForm = () => {
           rows={1}
           variant="standard"
           sx={{ width: "230px" }}
+          value={employerDetails.companyDescription}
+          onChange={(e) => {
+            setEmployerDetails({
+              ...employerDetails,
+              companyDescription: e.target.value,
+            });
+          }}
         />
         <TextField
           id="standard-basic"
           label="Email"
           variant="standard"
-          // value={email}
           sx={{ width: "230px" }}
+          value={employerDetails.companyEmail}
+          onBlur={validateEmail}
+          error={!isValidEmail}
+          helperText={!isValidEmail ? "Invalid email address" : ""}
+          onChange={(e) => {
+            setEmployerDetails({
+              ...employerDetails,
+              companyEmail: e.target.value,
+            });
+          }}
         />
         <TextField
           id="standard-basic"
           label="Password"
           variant="standard"
-          type="password"
-          // value={password}
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onBlur={validatePassword}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!isValidPassword}
+          helperText={
+            !isValidPassword
+              ? "> 8 characters long, 1 uppercase,1 lowercase, 1 digit."
+              : ""
+          }
           sx={{ width: "230px" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {showPassword ? (
+                  <VisibilityIcon
+                    onClick={() => setShowPassword(false)}
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={() => setShowPassword(true)}
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           id="standard-basic"
           label="Confirm Password"
           variant="standard"
-          type="password"
-          // value={password}
+          onBlur={samePassword}
+          error={!isPasswordSame}
+          helperText={!isPasswordSame ? "Passwords does not match" : ""}
+          type={showConfirmPassword ? "text" : "password"}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           sx={{ width: "230px" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {showConfirmPassword ? (
+                  <VisibilityIcon
+                    onClick={() => setShowConfirmPassword(false)}
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={() => setShowConfirmPassword(true)}
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
+              </InputAdornment>
+            ),
+          }}
         />
         <Button
           className="employer-signup-button"
           variant="contained"
           sx={{ width: "250px", marginTop: "30px" }}
-          // onClick={handleLogin}
+          onClick={handleEmployerSignUP}
           //   disabled={isDisabled}
         >
           Signup as Employer
         </Button>{" "}
+        <div>
+          <p>
+            already a member?
+            <button className="login" onClick={handleLogin}>
+              Login
+            </button>
+          </p>
+        </div>{" "}
       </div>
       <div className="employer-sideimg">
         <img
@@ -98,74 +239,198 @@ const EmployerSignupForm = () => {
     </div>
   );
 };
-const JobSeekerSignupForm = () => (
-  <div className="employer-page">
-    <div className="employer-sideimg">
-      <img
-        src={js}
-        style={{
-          width: "300px",
-          height: "400px",
-          borderBottomRightRadius: "30px",
-        }}
-      ></img>
-    </div>{" "}
-    <div className="employer-form">
-      <TextField
-        id="js-name"
-        label="First Name"
-        variant="standard"
-        //   value={
-        sx={{ width: "230px" }}
-      />
-      <TextField
-        id="js-name"
-        label="Last Name"
-        variant="standard"
-        //   value={
-        sx={{ width: "230px" }}
-      />
-      <TextField
-        id="js-profession"
-        label="Profession"
-        variant="standard"
-        sx={{ width: "230px" }}
-      />
-      <TextField
-        id="standard-basic"
-        label="Email"
-        variant="standard"
-        // value={email}
-        sx={{ width: "230px" }}
-      />
-      <TextField
-        id="standard-basic"
-        label="Password"
-        variant="standard"
-        type="password"
-        // value={password}
-        sx={{ width: "230px" }}
-      />
-      <TextField
-        id="standard-basic"
-        label="Confirm Password"
-        variant="standard"
-        type="password"
-        // value={password}
-        sx={{ width: "230px" }}
-      />
-      <Button
-        className="employer-signup-button"
-        variant="contained"
-        sx={{ width: "250px", marginTop: "30px" }}
-        // onClick={handleLogin}
-        //   disabled={isDisabled}
-      >
-        Signup as Job Seeker
-      </Button>{" "}
+
+const JobSeekerSignupForm = () => {
+  const navigate = useNavigate();
+
+  const [jsDetails, setJSDetails] = useState({
+    firstName: "",
+    lastName: "",
+    profession: "",
+    jsEmail: "",
+    jsPassword: "",
+  });
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [password, setPassword] = useState("");
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPasswordSame, setIsPasswordSame] = useState(true);
+
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(jsDetails.jsEmail);
+    setIsValidEmail(isValid);
+  };
+
+  const validatePassword = () => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasDigit = /\d/.test(password);
+
+    const isValid =
+      password.length >= minLength && hasUpperCase && hasLowerCase && hasDigit;
+
+    setIsValidPassword(isValid);
+  };
+
+  const samePassword = () => {
+    if (password === confirmPassword) {
+      setIsPasswordSame(true);
+    } else {
+      setIsPasswordSame(false);
+    }
+  };
+  const handleLogin = () => {
+    navigate(`/`);
+  };
+
+  const handleJSSignUP = () => {
+    console.log(jsDetails);
+  };
+  return (
+    <div className="employer-page">
+      <div className="employer-sideimg">
+        <img
+          src={js}
+          style={{
+            width: "300px",
+            height: "400px",
+            borderBottomRightRadius: "30px",
+          }}
+        ></img>
+      </div>{" "}
+      <div className="employer-form">
+        <TextField
+          id="js-name"
+          label="First Name"
+          variant="standard"
+          //   value={
+          sx={{ width: "230px" }}
+        />
+        <TextField
+          id="js-name"
+          label="Last Name"
+          variant="standard"
+          //   value={
+          sx={{ width: "230px" }}
+        />
+        <TextField
+          id="js-profession"
+          label="Profession"
+          variant="standard"
+          sx={{ width: "230px" }}
+        />
+        <TextField
+          id="standard-basic"
+          label="Email"
+          variant="standard"
+          sx={{ width: "230px" }}
+          value={jsDetails.jsEmail}
+          onBlur={validateEmail}
+          error={!isValidEmail}
+          helperText={!isValidEmail ? "Invalid email address" : ""}
+          onChange={(e) => {
+            setJSDetails({
+              ...jsDetails,
+              jsEmail: e.target.value,
+            });
+          }}
+        />
+        <TextField
+          id="standard-basic"
+          label="Password"
+          variant="standard"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onBlur={validatePassword}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!isValidPassword}
+          helperText={
+            !isValidPassword
+              ? "> 8 characters long, 1 uppercase,1 lowercase, 1 digit."
+              : ""
+          }
+          sx={{ width: "230px" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {showPassword ? (
+                  <VisibilityIcon
+                    onClick={() => setShowPassword(false)}
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={() => setShowPassword(true)}
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
+              </InputAdornment>
+            ),
+          }}
+        />
+        <TextField
+          id="standard-basic"
+          label="Confirm Password"
+          variant="standard"
+          onBlur={samePassword}
+          error={!isPasswordSame}
+          helperText={!isPasswordSame ? "Passwords does not match" : ""}
+          type={showConfirmPassword ? "text" : "password"}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          sx={{ width: "230px" }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {showConfirmPassword ? (
+                  <VisibilityIcon
+                    onClick={() => setShowConfirmPassword(false)}
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <VisibilityOffIcon
+                    onClick={() => setShowConfirmPassword(true)}
+                    style={{ cursor: "pointer" }}
+                  />
+                )}
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Button
+          className="employer-signup-button"
+          variant="contained"
+          sx={{ width: "250px", marginTop: "30px" }}
+          onClick={handleJSSignUP}
+          disabled={
+            // jsDetails.firstName != "" &&
+            // jsDetails.lastName.length > 0 &&
+            // jsDetails.profession.length > 0 &&
+            // isValidEmail &&
+            // isValidPassword &&
+            // isPasswordSame
+            true
+          }
+        >
+          Signup as Job Seeker
+        </Button>{" "}
+        <div>
+          <p>
+            already a member?
+            <button className="login" onClick={handleLogin}>
+              Login
+            </button>
+          </p>
+        </div>{" "}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SignupPage = () => {
   const [activeTab, setActiveTab] = useState("employer");

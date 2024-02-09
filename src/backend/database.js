@@ -21,7 +21,7 @@ class DbUtil {
     static async dbConnect() {
         try {
             console.log('Enter DbUtil - dbConnect');
-            await mongoose.connect(`mongodb+srv://<username>:<password>@jobhire.ix7mfjp.mongodb.net/`);
+            await mongoose.connect(`mongodb+srv://new:test234@jobhire.ix7mfjp.mongodb.net/`);
             console.log('Mongo DB connected....');
             console.log('Exit DbUtil - dbConnect');
         } catch (err) {

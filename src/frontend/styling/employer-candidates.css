@@ -1,0 +1,9 @@
+.candidates-total {
+  min-height: 77vw;
+  background-color: black;
+  width: 100vw;
+  transform: translateY(-20px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

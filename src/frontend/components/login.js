@@ -7,17 +7,77 @@ import { useState } from "react";
 import styled from "styled-components";
 // import loginimage from "../../assets/login.png";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  let loginCompanyData = null;
+  let loginJsData = null;
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  // const handleLogin = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5000/api/employers/login",
+  //       {
+  //         email,
+  //         password,
+  //       }
+  //     );
+  //     if (response.status === 200) {
+  //       // Login successful, redirect to dashboard or perform other actions
+  //       // console.log("Login successful");
+  //       console.log(response.data.user);
+  //       loginCompanyData = response.data.user;
+  //       navigate("/employerboard", { state: { loginCompanyData } });
+  //     }
+  //   } catch (error) {
+  //     if (error.response) {
+  //       // The request was made and the server responded with a status code
+  //       // that falls out of the range of 2xx
+  //       console.error("Error response:", error.response.data.message);
+  //       setErrorMessage(error.response.data.message);
+  //     } else if (error.request) {
+  //       // The request was made but no response was received
+  //       console.error("No response received:", error.request);
+  //       setErrorMessage("No response received from server");
+  //     } else {
+  //       // Something happened in setting up the request that triggered an Error
+  //       console.error("Request setup error:", error.message);
+  //       setErrorMessage("Error in setting up the request");
+  //     }
+  //   }
+  // };
+
+  const handleLogin = async () => {
     console.log(email, password);
-    if (email === "kalyan" && password === "keerkal@K9") {
-      navigate(`employerDashboard`);
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        // Successful login
+        console.log("Login successful");
+        console.log("User role:", response.data.role);
+
+        if (response.data.role === "employer") {
+          loginCompanyData = response.data.data;
+          console.log(loginCompanyData);
+          navigate("/employerboard", { state: { loginCompanyData } });
+        } else if (response.data.role === "jobseeker") {
+          loginJsData = response.data.data;
+          navigate("/jsboard", { state: { loginJsData } });
+        }
+        // You can redirect to a different page or perform other actions here
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      // setError(error.response.data.message);
     }
   };
 
@@ -25,7 +85,7 @@ const Login = () => {
     navigate(`/Signup`);
   };
   useEffect(() => {
-    console.log("Email:", email, "Password:", password);
+    // console.log("Email:", email, "Password:", password);
 
     if (email.length === 0 || password.length === 0) {
       setIsDisabled(true);
@@ -56,7 +116,7 @@ const Login = () => {
             sx={{ width: "250px" }}
             onChange={(e) => {
               setEmail(e.target.value);
-              console.log(e.target.value);
+              // console.log(e.target.value);
             }}
           />
           <TextField
@@ -68,7 +128,7 @@ const Login = () => {
             sx={{ width: "250px" }}
             onChange={(e) => {
               setPassword(e.target.value);
-              console.log(e.target.value);
+              // console.log(e.target.value);
             }}
           />{" "}
           <Button

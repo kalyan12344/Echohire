@@ -1,19 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
   Typography,
   Button,
   Pagination,
+  Drawer,
+  Box,
 } from "@mui/material";
 import "../styling/jobs.css";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Delete } from "@mui/icons-material";
+import EditedJobPostform from "./post-edited-job";
+import axios from "axios";
+import { color } from "framer-motion";
 
 const ITEMS_PER_PAGE = 4;
 
-const JobCard = ({ jobData }) => {
+const JobCard = ({ jobData, onDelete, onUpdate }) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editedJobData, setEditedJobData] = useState({ ...jobData });
+
+  const openDrawer = () => {
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+  };
+  const handleDeleteJob = () => {
+    console.log(jobData);
+    onDelete(jobData.jobID);
+  };
+
+  const handleUpdateJobs = () => {
+    console.log(editedJobData);
+    onUpdate(editedJobData);
+    closeDrawer();
+  };
   return (
     <Card
       className="job-card "
@@ -51,83 +76,60 @@ const JobCard = ({ jobData }) => {
         }}
       >
         <div className="edit-icon">
-          <EditIcon sx={{ color: "orange" }} />
+          <EditIcon
+            sx={{ color: "orange" }}
+            jobData={jobData}
+            onClick={openDrawer}
+            onUpdate={handleUpdateJobs}
+          />
         </div>
+        <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
+          <Box
+            sx={{
+              width: 600,
+              padding: "20px",
+              height: 1000,
+              backgroundColor: "#1a1819",
+            }}
+          >
+            <EditedJobPostform job={jobData} onUpdate={handleUpdateJobs} />
+          </Box>
+        </Drawer>
         <div className="delete-icon">
-          <DeleteIcon sx={{ color: "#ff2600d2" }} />
+          <DeleteIcon sx={{ color: "#ff2600d2" }} onClick={handleDeleteJob} />
         </div>
       </div>
     </Card>
   );
 };
 
-const JobCardList = () => {
-  const dummyJobData = [
-    {
-      title: "Software Engineer",
-      description: "Join our dynamic team of software engineers...",
-      qualifications: "Bachelor's degree in Computer Science...",
-      skills: "React, Node.js, MongoDB, JavaScript...",
-      location: "New York, NY",
-      type: "Full-Time",
-      deadline: "2022-03-01",
-    },
-    {
-      title: "Data Scientist",
-      description: "Exciting opportunity for a skilled data scientist...",
-      qualifications: "Master's degree in Data Science or related field...",
-      skills: "Python, Machine Learning, SQL...",
-      location: "San Francisco, CA",
-      type: "Contract",
-      deadline: "2022-03-15",
-    },
-    {
-      title: "Software Engineer",
-      description: "Join our dynamic team of software engineers...",
-      qualifications: "Bachelor's degree in Computer Science...",
-      skills: "React, Node.js, MongoDB, JavaScript...",
-      location: "New York, NY",
-      type: "Full-Time",
-      deadline: "2022-03-01",
-    },
-    {
-      title: "Data Scientist",
-      description: "Exciting opportunity for a skilled data scientist...",
-      qualifications: "Master's degree in Data Science or related field...",
-      skills: "Python, Machine Learning, SQL...",
-      location: "San Francisco, CA",
-      type: "Contract",
-      deadline: "2022-03-15",
-    },
-    {
-      title: "Software Engineer",
-      description: "Join our dynamic team of software engineers...",
-      qualifications: "Bachelor's degree in Computer Science...",
-      skills: "React, Node.js, MongoDB, JavaScript...",
-      location: "New York, NY",
-      type: "Full-Time",
-      deadline: "2022-03-01",
-    },
-    {
-      title: "Data Scientist",
-      description: "Exciting opportunity for a skilled data scientist...",
-      qualifications: "Master's degree in Data Science or related field...",
-      skills: "Python, Machine Learning, SQL...",
-      location: "San Francisco, CA",
-      type: "Contract",
-      deadline: "2022-03-15",
-    },
-  ];
+const JobCardList = ({ username, jobs }) => {
+  const companyName = username.username;
+  const jobData = jobs;
+  console.log(jobs);
+  // const jobData = [...jobs];
+  console.log(companyName);
 
+  console.log(jobData);
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
+  const handleDeleteJob = (jobID) => {
+    console.log("Deleting job with ID:", jobID);
+    const updatedJobData = jobData.filter((job) => job.jobID !== jobID);
+  };
+  const handleUpdateJob = (updatedJob) => {
+    console.log("Deleting job with ID:", updatedJob);
+    const updatedJobData = jobData.map((job) =>
+      job.jobID === updatedJob.jobID ? updatedJob : job
+    );
+  };
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pageCount = Math.ceil(dummyJobData.length / ITEMS_PER_PAGE);
-  const paginatedData = dummyJobData.slice(offset, offset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(jobData.length / ITEMS_PER_PAGE);
+  const paginatedData = jobData.slice(offset, offset + ITEMS_PER_PAGE);
 
   return (
     <div className="rend-comp-parent">
@@ -143,9 +145,18 @@ const JobCardList = () => {
         <div>
           <h2 style={{ color: "white" }}>Jobs Posted</h2>
         </div>
-        {paginatedData.map((job, index) => (
-          <JobCard key={index} jobData={job} />
-        ))}
+        {jobData.length !== 0 ? (
+          paginatedData.map((job, index) => (
+            <JobCard
+              key={job.jobID}
+              jobData={job}
+              onDelete={handleDeleteJob}
+              onUpdate={handleUpdateJob}
+            />
+          ))
+        ) : (
+          <h3 style={{ color: "orange" }}>No jobs Posted Yet</h3>
+        )}
         <Pagination
           count={pageCount}
           page={currentPage}

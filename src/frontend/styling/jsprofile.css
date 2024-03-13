@@ -1,0 +1,48 @@
+.profile {
+  width: 100vw;
+  min-height: 100vh;
+  height: fit-content;
+  background-color: black;
+  transform: translateY(-30px);
+  padding: 20px;
+}
+
+.skill-textbox {
+  border: none;
+  height: 5px;
+  border-radius: 20px;
+  margin-right: 5px;
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.skill-textbox:focus {
+  border: none;
+  outline: none;
+}
+
+.skills-card {
+  width: 50vw;
+  display: flex;
+  background-color: rgba(128, 128, 128, 0.753);
+  border-radius: 20px;
+  padding: 10px;
+  flex-direction: column;
+}
+
+.personal-info {
+  width: 30vw;
+  background-color: rgba(128, 128, 128, 0.753);
+  margin-right: 20px;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.skill-pills {
+  display: flex;
+  width: 50vw;
+  flex-wrap: wrap;
+}
+.skill-pill {
+  margin-bottom: 5px;
+}

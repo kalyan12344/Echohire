@@ -1,8 +1,10 @@
 import "./App.css";
-import EmployerDashboard from "./frontend/components/employer-board";
+import EmployerBoard from "./frontend/components/employer-board";
 import Login from "./frontend/components/login";
 import SignupPage from "./frontend/components/signup";
 import { BrowserRouter, Route, Switch, Routes } from "react-router-dom";
+import JsBoard from "./frontend/components/jsBoard";
+import JobApplicationForm from "./frontend/components/job-application";
 // import { MantineProvider } from "@mantine/core";
 
 const App = () => {
@@ -11,11 +13,9 @@ const App = () => {
       <Routes>
         <Route exact path="/" element={<Login />} />
         <Route exact path="/Signup" element={<SignupPage />} />
-        <Route
-          exact
-          path="/employerDashboard"
-          element={<EmployerDashboard />}
-        />
+        <Route exact path="/employerboard" element={<EmployerBoard />} />
+        <Route exact path="/jsboard" element={<JsBoard />} />
+        <Route exact path="/jobapplication" element={<JobApplicationForm />} />
       </Routes>
     </BrowserRouter>
   );

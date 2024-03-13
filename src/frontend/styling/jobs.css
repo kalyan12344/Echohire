@@ -1,7 +1,7 @@
 .job-card {
   width: 600px;
 
-  background-color: #202020cc;
+  background-color: #e71010;
   backdrop-filter: blur(8px);
   margin-bottom: 10px;
   color: white;
@@ -53,6 +53,7 @@
   justify-content: center;
   /* align-items: center; */
 }
+
 .edit-icon:hover,
 .delete-icon:hover {
   cursor: pointer;
@@ -60,4 +61,15 @@
 .edit-icon:active,
 .delete-icon:active {
   transform: scale(0.9);
+}
+
+.applied-job-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* gap: 200px; */
+}
+
+.job-content {
+  width: 450px;
 }

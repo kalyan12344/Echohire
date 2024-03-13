@@ -11,5 +11,5 @@
 
 .post-button:active {
   transform: scale(0.9);
-  background-color: rgb(56, 56, 255);
+  background-color: rgba(56, 56, 255, 0.877);
 }

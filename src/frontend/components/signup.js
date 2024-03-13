@@ -11,6 +11,8 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 
+// import RaisedButton from "@mui/material";
+
 const EmployerSignupForm = () => {
   const navigate = useNavigate();
   const industries = [
@@ -32,6 +34,8 @@ const EmployerSignupForm = () => {
     companyDescription: "",
     companyEmail: "",
     companyPassword: "",
+    companyLogo: null,
+    signupType: "employer",
   });
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [password, setPassword] = useState("");
@@ -47,6 +51,24 @@ const EmployerSignupForm = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(employerDetails.companyEmail);
     setIsValidEmail(isValid);
+  };
+  const handleLogoChange = (event) => {
+    console.log(event);
+    const file = event.target.files[0];
+
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onload = () => {
+      console.log(reader.result);
+      // setEmployerDetails({
+      //   ...employerDetails,
+      //   companyLogo: reader.result,
+      // });
+    };
+
+    reader.onerror = (error) => {
+      console.log("Error: ", error);
+    };
   };
 
   const validatePassword = () => {
@@ -75,6 +97,12 @@ const EmployerSignupForm = () => {
 
   const handleEmployerSignUP = async () => {
     console.log(employerDetails);
+    if (isPasswordSame) {
+      setEmployerDetails({
+        ...employerDetails,
+        companyPassword: confirmPassword,
+      });
+    }
     try {
       const response = await axios.post(
         "http://localhost:5000/api/employers/signup",
@@ -160,9 +188,10 @@ const EmployerSignupForm = () => {
           error={!isValidEmail}
           helperText={!isValidEmail ? "Invalid email address" : ""}
           onChange={(e) => {
+            console.log(e.toLowerCase());
             setEmployerDetails({
               ...employerDetails,
-              companyEmail: e.target.value,
+              companyEmail: e.target.value.toLowerCase(),
             });
           }}
         />
@@ -228,6 +257,15 @@ const EmployerSignupForm = () => {
             ),
           }}
         />
+        <Button variant="contained" sx={{ backgroundColor: "red" }}>
+          <input accept="image/*" type="file" onChange={handleLogoChange} />
+          Choose File
+        </Button>
+        {employerDetails.companyLogo ? (
+          <img height={100} src={employerDetails.companyLogo} />
+        ) : (
+          ""
+        )}
         <Button
           className="employer-signup-button"
           variant="contained"
@@ -269,6 +307,7 @@ const JobSeekerSignupForm = () => {
     profession: "",
     jsEmail: "",
     jsPassword: "",
+    signupType: "js",
   });
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [password, setPassword] = useState("");
@@ -308,9 +347,39 @@ const JobSeekerSignupForm = () => {
     navigate(`/`);
   };
 
-  const handleJSSignUP = () => {
+  const handleJSSignUP = async () => {
+    if (isPasswordSame) {
+      setJSDetails({ ...jsDetails, jsPassword: confirmPassword });
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/js/signup",
+        jsDetails,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        console.log("js signed up successfully");
+      } else {
+        console.error("Failed to sign up js");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        console.log("User already exists:", error.response.data.message);
+      } else {
+        console.error("Error signing up job seeker:", error);
+      }
+    }
     console.log(jsDetails);
   };
+
+  useEffect(() => {
+    console.log(jsDetails);
+  }, [jsDetails.jsPassword]);
   return (
     <div className="employer-page">
       <div className="employer-sideimg">
@@ -328,21 +397,40 @@ const JobSeekerSignupForm = () => {
           id="js-name"
           label="First Name"
           variant="standard"
-          //   value={
+          value={jsDetails.firstName}
           sx={{ width: "230px" }}
+          onChange={(e) => {
+            setJSDetails({
+              ...jsDetails,
+              firstName: e.target.value,
+            });
+          }}
         />
         <TextField
           id="js-name"
           label="Last Name"
           variant="standard"
-          //   value={
+          value={jsDetails.lastName}
           sx={{ width: "230px" }}
+          onChange={(e) => {
+            setJSDetails({
+              ...jsDetails,
+              lastName: e.target.value,
+            });
+          }}
         />
         <TextField
           id="js-profession"
           label="Profession"
           variant="standard"
           sx={{ width: "230px" }}
+          value={jsDetails.profession}
+          onChange={(e) => {
+            setJSDetails({
+              ...jsDetails,
+              profession: e.target.value,
+            });
+          }}
         />
         <TextField
           id="standard-basic"
@@ -354,6 +442,8 @@ const JobSeekerSignupForm = () => {
           error={!isValidEmail}
           helperText={!isValidEmail ? "Invalid email address" : ""}
           onChange={(e) => {
+            console.log(jsDetails.jsEmail.toLowerCase());
+
             setJSDetails({
               ...jsDetails,
               jsEmail: e.target.value,
@@ -428,13 +518,12 @@ const JobSeekerSignupForm = () => {
           sx={{ width: "250px", marginTop: "30px" }}
           onClick={handleJSSignUP}
           disabled={
-            // jsDetails.firstName != "" &&
-            // jsDetails.lastName.length > 0 &&
-            // jsDetails.profession.length > 0 &&
-            // isValidEmail &&
-            // isValidPassword &&
-            // isPasswordSame
-            true
+            //   jsDetails.firstName != "" &&
+            //   jsDetails.lastName.length > 0 &&
+            //   jsDetails.profession.length > 0 &&
+            // isValidEmail && isValidPassword && isPasswordSame
+            // true
+            false
           }
         >
           Signup as Job Seeker

@@ -2,7 +2,7 @@ import "../styling/job-post.css";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Button } from "@mui/material";
-
+import axios from "axios";
 import {
   FormControl,
   RadioGroup,
@@ -29,7 +29,7 @@ const theme = createTheme({
   },
 });
 
-const JobPostform = () => {
+const JobPostform = ({ username, onJobPost }) => {
   const [selectedOptionLocation, setSelectedOptionLocation] =
     useState("remote");
   const [discloseSalary, setDiscloseSalary] = useState(false);
@@ -44,6 +44,7 @@ const JobPostform = () => {
     type: "",
     deadline: "",
     salary: "",
+    companyName: username,
   });
   const handleToggle = () => {
     setDiscloseSalary(!discloseSalary);
@@ -58,10 +59,28 @@ const JobPostform = () => {
     setSelectedOptionType(value);
     setJobDetails({ ...jobDetails, type: value });
   };
-  const handlePostJob = () => {
-    // Here, you can use jobDetails to send the data to your backend or perform any other action
-    console.log("Job Details:", jobDetails);
-    // Add your logic for posting the job details
+  const handlePostJob = async () => {
+    try {
+      console.log(jobDetails);
+      const response = await axios.post(
+        "http://localhost:5000/api/jobpost",
+        jobDetails,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        console.log("job posted successfully");
+        onJobPost(response.data.job);
+      } else {
+        console.error("job post failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <ThemeProvider theme={theme}>

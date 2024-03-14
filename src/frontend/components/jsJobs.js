@@ -55,7 +55,7 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
       };
 
       const response = await axios.post(
-        "http://localhost:5000/api/jobapplication",
+        "http://localhost:5001/api/jobapplication",
         appliactionData,
         {
           headers: {

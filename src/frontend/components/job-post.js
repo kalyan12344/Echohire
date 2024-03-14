@@ -63,7 +63,7 @@ const JobPostform = ({ username, onJobPost }) => {
     try {
       console.log(jobDetails);
       const response = await axios.post(
-        "http://localhost:5000/api/jobpost",
+        "http://localhost:5001/api/jobpost",
         jobDetails,
         {
           headers: {

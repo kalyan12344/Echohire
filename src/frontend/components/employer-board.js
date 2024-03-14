@@ -164,7 +164,7 @@ const EmployerBoard = () => {
                 color: "white",
               }}
               icon={<PeopleIcon />}
-              label="Candidates"
+              label="Applications"
             />
             <Tab
               style={{

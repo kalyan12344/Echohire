@@ -43,7 +43,7 @@ const EmployerBoard = () => {
   const getJobs = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/jobs/${loginCompanyData.companyName}`,
+        `http://localhost:5001/api/jobs/${loginCompanyData.companyName}`,
 
         {
           headers: {

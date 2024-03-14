@@ -105,7 +105,7 @@ const EmployerSignupForm = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/employers/signup",
+        "http://localhost:5001/api/employers/signup",
         employerDetails,
         {
           headers: {
@@ -353,7 +353,7 @@ const JobSeekerSignupForm = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/js/signup",
+        "http://localhost:5001/api/js/signup",
         jsDetails,
         {
           headers: {

@@ -50,7 +50,7 @@ const JsBoard = () => {
   const getJobs = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/jsjobs`,
+        `http://localhost:5001/api/jsjobs`,
 
         {
           headers: {
@@ -75,7 +75,7 @@ const JsBoard = () => {
   const getAppliedJobs = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/applications/${loginJsData._id}`,
+        `http://localhost:5001/api/applications/${loginJsData._id}`,
 
         {
           headers: {

@@ -17,13 +17,15 @@ import axios from "axios";
 import { color } from "framer-motion";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-
 import Snackbar from "@mui/material/Snackbar";
 import { set } from "mongoose";
+import JobApplicationForm from "./job-application";
+import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 4;
 
-const JobCardJS = ({ jobData, loginData, onJobApply }) => {
+
+const JobCardJS = ({ jobData, loginData, onJobApply, navigate }) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = (event, reason) => {
@@ -45,41 +47,12 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
       </IconButton>
     </React.Fragment>
   );
-  const handleApply = async () => {
-    try {
-      const appliactionData = {
-        ...jobData,
-        jsID: loginData._id,
-        jobID: jobData._id,
-        status: "Applied",
-      };
+  const handleApply =  () => {
 
-      const response = await axios.post(
-        "http://localhost:5001/api/jobapplication",
-        appliactionData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        console.log("job applied successfully");
-        onJobApply(appliactionData);
-      } else if (response.status === 409) {
-        console.log("409");
-        // Open Snackbar when status is 409
-      } else {
-        console.error("job application failed");
-      }
-    } catch (error) {
-      if (error.message === "Request failed with status code 409") {
-        console.log("409");
-        setOpen(true);
-      }
-      // console.error(error);
-    }
+    navigate(`/applicationform/${loginData._id}/${jobData._id}`)
+    return(
+    <JobApplicationForm jobs={jobData} loginData={loginData}></JobApplicationForm>)
+ 
   };
 
   return (
@@ -118,7 +91,7 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
         action={action}
       />
       <Button variant="contained" onClick={handleApply}>
-        Apply
+        Apply 
       </Button>
     </Card>
   );
@@ -127,6 +100,7 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
 const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
   const jobData = jobs;
   console.log(jobs);
+  const navigate = useNavigate();
   // const jobData = [...jobs];
 
   console.log(jobData);
@@ -135,6 +109,7 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageCount = Math.ceil(jobData.length / ITEMS_PER_PAGE);
@@ -161,6 +136,7 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
               jobData={job}
               loginData={loginData}
               onJobApply={onJobApply}
+              navigate={navigate}
             />
           ))
         ) : (

@@ -53,19 +53,19 @@ router.post("/api/jobapplication", async (req, res) => {
     }
   });
   
-  router.get("/api/applications/:jsID", async (req, res) => {
-    try {
-      // Extract the company name from the request parameters
-      const { jsID } = req.params;
-      console.log(jsID);
-      // Query the database for jobs associated with the given company name
-      const applications = await application.find({ jsID: jsID });
+  // router.get("/api/applications/:jsID", async (req, res) => {
+  //   try {
+  //     // Extract the company name from the request parameters
+  //     const { jsID } = req.params;
+  //     console.log(jsID);
+  //     // Query the database for jobs associated with the given company name
+  //     const applications = await application.find({ jsID: jsID });
   
-      // Send the retrieved jobs as a response
-      res.status(200).json({ applications });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
-  });
+  //     // Send the retrieved jobs as a response
+  //     res.status(200).json({ applications });
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ message: "Internal Server Error" });
+  //   }
+  // });
   module.exports = router;

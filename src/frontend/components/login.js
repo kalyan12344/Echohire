@@ -71,7 +71,7 @@ const Login = () => {
           navigate("/employerboard", { state: { loginCompanyData } });
         } else if (response.data.role === "jobseeker") {
           loginJsData = response.data.data;
-          navigate("/jsboard", { state: { loginJsData } });
+          navigate(`/jsboard`, { state: { loginJsData } });
         }
         // You can redirect to a different page or perform other actions here
       }

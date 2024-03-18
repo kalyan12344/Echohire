@@ -26,10 +26,11 @@ const JsBoard = () => {
   const location = useLocation();
   const { loginJsData } = location.state;
   console.log(loginJsData);
+  const jsid=loginJsData._id
+  // console.log(loginJsData._id)
   let username = loginJsData.firstName + " " + loginJsData.lastName;
   username = username.toUpperCase();
   const [value, setValue] = useState(0);
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [jobData, setJobData] = useState([]);
   const [jobApplications, setJobApplications] = useState([]);

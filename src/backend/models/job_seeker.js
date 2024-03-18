@@ -5,12 +5,20 @@ const mongoose = require("mongoose");
 const jsSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
-  profession: String,
   jsEmail: String,
   jsPassword: String,
-  jsPhNo: String,
-  jsAddress: String,
-  // companyLogo: String,
+  profession: String,
+  address: String,
+  phone_number: String,
+  nationality: String,
+  resume: String,
+  dob: Date,
+  employement_history: String,
+  education: String,
+  skills: String,
+  cover_letter: String,
+  references: String,
+  image: String,
 });
 const Js = mongoose.model("JobSeeker", jsSchema);
 module.exports = Js;

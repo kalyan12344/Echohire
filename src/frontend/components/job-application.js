@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
 import "../styling/job-application.css";
-
-const JobApplicationForm = () => {
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+//this is for the Job application
+const JobApplicationForm = ({  }) => {
+  const navigate = useNavigate();
+  const { jsid,jobid } = useParams();
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstname: "",
+    lastname:"",
     email: "",
     phone: "",
     address: "",
@@ -18,6 +24,8 @@ const JobApplicationForm = () => {
     references: "",
     availability: "",
     termsAgreed: false,
+    jsId:jsid,
+    jobId:jobid
   });
 
   const handleChange = (e) => {
@@ -26,19 +34,75 @@ const JobApplicationForm = () => {
     setFormData({ ...formData, [name]: newValue });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     // Add code here to handle form submission, e.g., send data to server
     console.log(formData);
+    try {
+      const response = await axios.post("http://localhost:5001/application/post", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.status === 200) {
+        console.log("Applied successfully to the job");
+        // Redirect or show success message
+      } else {
+        console.error("Application failed");
+        // Show error message
+      }
+    } catch (error) {
+      console.error("Error applying to the job:", error);
+      // Show error message
+    }
+  
+       try {
+      const response = await axios.get(
+        `http://localhost:5001/api/js/email/${jsid}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+     
+console.log(response)
+      if (response.status === 200) {
+        console.log("job applied successfully");
+      } else if (response.status === 409) {
+        console.log("409");
+        // Open Snackbar when status is 409
+      } else {
+        console.error("job application failed");
+      }
+      const loginJsData=response.data.js
+      console.log(loginJsData,"loginData")
+
+      navigate(`/jsboard`, { state: { loginJsData } });
+    } catch (error) {
+      if (error.message === "Request failed with status code 409") {
+        console.log("409");
+      }
+      // console.error(error);
+    }
+   
   };
 
   return (
     <form onSubmit={handleSubmit} className="job-application-form">
       <TextField
-        label="Full Name"
+        label="First Name"
         className="form-field"
-        name="fullName"
-        value={formData.fullName}
+        name="firstname"
+        value={formData.firstname}
+        onChange={handleChange}
+        required
+      />
+       <TextField
+        label="Last Name"
+        className="form-field"
+        name="lastname"
+        value={formData.lastname}
         onChange={handleChange}
         required
       />

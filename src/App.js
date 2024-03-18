@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch, Routes } from "react-router-dom";
 import JsBoard from "./frontend/components/jsBoard";
 import JobApplicationForm from "./frontend/components/job-application";
 import TickMarkAndRedirect from "./frontend/components/tickandredirect";
+import ApplicationFormPage from "./frontend/components/Job-Application-Process/ApplicationForm_retirval";
 // import { MantineProvider } from "@mantine/core";
 
 const App = () => {
@@ -18,6 +19,12 @@ const App = () => {
         <Route exact path="/jsboard" element={<JsBoard />} />
         <Route exact path="/jobapplication" element={<JobApplicationForm />} />
         <Route exact path="/Tick" element={<TickMarkAndRedirect />} />
+        <Route
+          exact
+          path="/applicationform/:jsid/:jobid"
+          element={<JobApplicationForm />}
+        />
+        <Route exact path="/getform" element={<ApplicationFormPage />} />
       </Routes>
     </BrowserRouter>
   );

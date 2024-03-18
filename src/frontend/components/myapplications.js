@@ -34,17 +34,17 @@ const JobCard = ({ jobData }) => {
       <div className="applied-job-card">
         <CardContent className="job-content">
           <Typography variant="h5" component="div" sx={{ color: "white" }}>
-            {jobData.title}
+            {jobData.jobId.title}
           </Typography>
 
           <Typography variant="body2" sx={{ color: "white" }}>
-            Location: {jobData.location}
+            Location: {jobData.jobId.location}
           </Typography>
           <Typography variant="body2" sx={{ color: "white" }}>
-            Type: {jobData.type}
+            Type: {jobData.jobId.type}
           </Typography>
           <Typography variant="body2" sx={{ color: "white" }}>
-            Deadline: {jobData.deadline}
+            Deadline: {jobData.jobId.deadline}
           </Typography>
         </CardContent>
         <div

@@ -383,6 +383,16 @@ const JobSeekerSignupForm = () => {
     jsAddress: "",
     jsEmail: "",
     jsPassword: "",
+    nationality: "",
+    resume: "",
+    dob: "",
+    employement_history: "",
+    education: "",
+    skills: "",
+    cover_letter: "",
+    references: "",
+    image: "",
+
     signupType: "js",
   });
   const [isValidEmail, setIsValidEmail] = useState(true);
@@ -425,38 +435,38 @@ const JobSeekerSignupForm = () => {
 
   const handleJSSignUP = async () => {
     if (isPasswordSame) {
+      // Update the jsDetails state
       setJSDetails({ ...jsDetails, jsPassword: confirmPassword });
     }
-    try {
-      const response = await axios.post(
-        "http://localhost:5001/api/js/signup",
-        jsDetails,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  };
 
-      if (response.status === 201) {
-        console.log("js signed up successfully");
-        navigate("/Tick");
-      } else {
-        console.error("Failed to sign up js");
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        console.log("User already exists:", error.response.data.message);
-      } else {
+  // useEffect to trigger API call when jsDetails changes
+  useEffect(() => {
+    // Check if password is not empty and other necessary conditions
+    if (isPasswordSame && jsDetails.jsPassword !== "") {
+      try {
+        axios
+          .post("http://localhost:5001/api/js/signup", jsDetails, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            if (response.status === 201) {
+              console.log("js signed up successfully");
+              navigate("/Tick");
+            } else {
+              console.error("Failed to sign up js");
+            }
+          })
+          .catch((error) => {
+            console.error("Error signing up job seeker:", error);
+          });
+      } catch (error) {
         console.error("Error signing up job seeker:", error);
       }
     }
-    console.log(jsDetails);
-  };
-
-  useEffect(() => {
-    console.log(jsDetails);
-  }, [jsDetails.jsPassword]);
+  }, [jsDetails, isPasswordSame]);
   return (
     <div className="employer-page">
       {/* <div className="employer-sideimg">

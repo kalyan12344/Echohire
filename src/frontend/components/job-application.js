@@ -5,12 +5,12 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 //this is for the Job application
-const JobApplicationForm = ({  }) => {
+const JobApplicationForm = ({}) => {
   const navigate = useNavigate();
-  const { jsid,jobid } = useParams();
+  const { jsid, jobid } = useParams();
   const [formData, setFormData] = useState({
     firstname: "",
-    lastname:"",
+    lastname: "",
     email: "",
     phone: "",
     address: "",
@@ -24,8 +24,8 @@ const JobApplicationForm = ({  }) => {
     references: "",
     availability: "",
     termsAgreed: false,
-    jsId:jsid,
-    jobId:jobid
+    jsId: jsid,
+    jobId: jobid,
   });
 
   const handleChange = (e) => {
@@ -34,16 +34,20 @@ const JobApplicationForm = ({  }) => {
     setFormData({ ...formData, [name]: newValue });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add code here to handle form submission, e.g., send data to server
     console.log(formData);
     try {
-      const response = await axios.post("http://localhost:5001/application/post", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5001/application/post",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       if (response.status === 200) {
         console.log("Applied successfully to the job");
         // Redirect or show success message
@@ -55,18 +59,18 @@ const JobApplicationForm = ({  }) => {
       console.error("Error applying to the job:", error);
       // Show error message
     }
-  
-       try {
+
+    try {
       const response = await axios.get(
-        `http://localhost:5001/api/js/email/${jsid}`,
+        `http://localhost:5001/api/jsdetails/${jsid}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-     
-console.log(response)
+
+      console.log(response);
       if (response.status === 200) {
         console.log("job applied successfully");
       } else if (response.status === 409) {
@@ -75,8 +79,8 @@ console.log(response)
       } else {
         console.error("job application failed");
       }
-      const loginJsData=response.data.js
-      console.log(loginJsData,"loginData")
+      const loginJsData = response.data.js;
+      console.log(loginJsData, "loginData");
 
       navigate(`/jsboard`, { state: { loginJsData } });
     } catch (error) {
@@ -85,7 +89,6 @@ console.log(response)
       }
       // console.error(error);
     }
-   
   };
 
   return (
@@ -98,7 +101,7 @@ console.log(response)
         onChange={handleChange}
         required
       />
-       <TextField
+      <TextField
         label="Last Name"
         className="form-field"
         name="lastname"

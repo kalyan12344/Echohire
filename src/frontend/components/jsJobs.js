@@ -17,7 +17,7 @@ import axios from "axios";
 import { color } from "framer-motion";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-
+import { Navigate, useNavigate } from "react-router-dom";
 import Snackbar from "@mui/material/Snackbar";
 import { set } from "mongoose";
 
@@ -25,7 +25,7 @@ const ITEMS_PER_PAGE = 4;
 
 const JobCardJS = ({ jobData, loginData, onJobApply }) => {
   const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -46,40 +46,7 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
     </React.Fragment>
   );
   const handleApply = async () => {
-    try {
-      const appliactionData = {
-        ...jobData,
-        jsID: loginData._id,
-        jobID: jobData._id,
-        status: "Applied",
-      };
-
-      const response = await axios.post(
-        "http://localhost:5001/api/jobapplication",
-        appliactionData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        console.log("job applied successfully");
-        onJobApply(appliactionData);
-      } else if (response.status === 409) {
-        console.log("409");
-        // Open Snackbar when status is 409
-      } else {
-        console.error("job application failed");
-      }
-    } catch (error) {
-      if (error.message === "Request failed with status code 409") {
-        console.log("409");
-        setOpen(true);
-      }
-      // console.error(error);
-    }
+    navigate(`/applicationform/${loginData._id}/${jobData._id}`);
   };
 
   return (

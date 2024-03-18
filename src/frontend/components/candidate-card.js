@@ -2,7 +2,6 @@ import React from "react";
 import { Card, CardContent, Chip, Typography } from "@mui/material";
 
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
-import usaData from "../components/usa.json";
 
 const CandidateCard = ({
   name,
@@ -22,7 +21,6 @@ const CandidateCard = ({
     onFurthur(applicationDetails);
   };
 
-  console.log(usaData);
   const status = applicationDetails.status;
   console.log(status);
   return (

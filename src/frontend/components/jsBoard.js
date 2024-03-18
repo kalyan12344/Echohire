@@ -9,18 +9,8 @@ import WorkIcon from "@mui/icons-material/Work";
 import PeopleIcon from "@mui/icons-material/People";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import "../styling/employer-board.css";
-import { colorTransformations } from "@mui/material/Link/getTextDecoration";
-import JobPostform from "./job-post";
-import JobCardList from "./jobs";
-import { Drawer } from "@mui/material";
-// import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import EmployerProfile from "./employer-profile";
-import CandidateList from "./employer-candidates";
-import { useParams } from "react-router-dom";
-import EmployerDashboard from "./employer-dashboard";
+
+import BookmarkRoundedIcon from "@mui/icons-material/BookmarkRounded";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -30,6 +20,7 @@ import JobCardListJS from "./jsJobs";
 import JsDashboard from "./jsDashboard";
 import MyApplications from "./myapplications";
 import JsProfile from "./jsprofile";
+import SavedJobs from "./jsSaved";
 
 const JsBoard = () => {
   const location = useLocation();
@@ -144,7 +135,11 @@ const JsBoard = () => {
           </div>
         );
       case 3:
+        return <SavedJobs />;
+
+      case 4:
         return <JsProfile loginData={loginJsData} username={username} />;
+
       default:
         return null;
     }
@@ -180,6 +175,7 @@ const JsBoard = () => {
                 display: "flex",
                 flexDirection: "row",
                 gap: "5px",
+                fontSize: "10px",
               }}
               style={{
                 color: "white",
@@ -193,6 +189,7 @@ const JsBoard = () => {
                 flexDirection: "row",
                 gap: "5px",
                 color: "white",
+                fontSize: "10px",
               }}
               icon={<WorkIcon />}
               label="Jobs"
@@ -203,9 +200,22 @@ const JsBoard = () => {
                 flexDirection: "row",
                 gap: "5px",
                 color: "white",
+                fontSize: "10px",
               }}
               icon={<PeopleIcon />}
               label="my applications"
+            />
+
+            <Tab
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "5px",
+                color: "white",
+                fontSize: "10px",
+              }}
+              icon={<BookmarkRoundedIcon />}
+              label="Saved Jobs"
             />
             <Tab
               style={{
@@ -213,6 +223,7 @@ const JsBoard = () => {
                 flexDirection: "row",
                 gap: "5px",
                 color: "white",
+                fontSize: "10px",
               }}
               icon={<FolderSharedIcon />}
               label="Profile"

@@ -109,17 +109,36 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
           </Typography>
         </CardContent>
       </div>
-      <Snackbar
-        open={open}
-        autoHideDuration={2000}
-        severity="success"
-        onClose={handleClose}
-        message="You have already for this job"
-        action={action}
-      />
-      <Button variant="contained" onClick={handleApply}>
-        Apply
-      </Button>
+      <div>
+        {" "}
+        <Snackbar
+          open={open}
+          sx={{ width: "30px" }}
+          autoHideDuration={2000}
+          severity="success"
+          onClose={handleClose}
+          message="You have already for this job"
+          action={action}
+        />
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          gap: "30px",
+          justifyContent: "space-around",
+          marginRight: "10px",
+        }}
+      >
+        <Button variant="contained" onClick={handleApply}>
+          Save
+        </Button>
+        <Button variant="contained" onClick={handleApply}>
+          Apply
+        </Button>
+      </div>
     </Card>
   );
 };

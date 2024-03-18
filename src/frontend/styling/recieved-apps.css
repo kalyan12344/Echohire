@@ -1,0 +1,7 @@
+.chip:hover {
+  cursor: pointer;
+}
+
+.chip:focus {
+  scale: 0.9;
+}

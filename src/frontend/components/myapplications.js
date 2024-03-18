@@ -17,7 +17,8 @@ const JobCard = ({ jobData }) => {
   const statusColor = {
     Applied: "white",
     InConsideration: "green",
-    Further: "green",
+    Success: "green",
+    Rejected: "red",
   };
 
   return (

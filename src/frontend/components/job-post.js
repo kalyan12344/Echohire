@@ -6,12 +6,18 @@ import axios from "axios";
 import {
   FormControl,
   RadioGroup,
+  InputLabel,
+  Select,
+  MenuItem,
   FormControlLabel,
   Radio,
   TextField,
   Switch,
   InputAdornment,
 } from "@mui/material";
+
+import usaData from "../components/usa.json";
+
 // import { withStyles } from "@mui/styles";
 
 import React from "react";
@@ -32,6 +38,8 @@ const theme = createTheme({
 const JobPostform = ({ username, onJobPost }) => {
   const [selectedOptionLocation, setSelectedOptionLocation] =
     useState("remote");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [discloseSalary, setDiscloseSalary] = useState(false);
 
   const [selectedOptionType, setSelectedOptionType] = useState("");
@@ -58,6 +66,15 @@ const JobPostform = ({ username, onJobPost }) => {
     const value = event.target.value;
     setSelectedOptionType(value);
     setJobDetails({ ...jobDetails, type: value });
+  };
+
+  const handleStateChange = (event) => {
+    setSelectedState(event.target.value);
+    setSelectedCity(""); // Reset city selection when state changes
+  };
+
+  const handleCityChange = (event) => {
+    setSelectedCity(event.target.value);
   };
   const handlePostJob = async () => {
     try {
@@ -252,30 +269,87 @@ const JobPostform = ({ username, onJobPost }) => {
             </FormControl>
 
             {selectedOptionLocation != "remote" && (
-              <TextField
-                id="job-location"
-                label="Location"
-                variant="standard"
-                value={jobDetails.location}
-                sx={{
-                  width: "250px",
-                  "& .MuiInputLabel-root": { color: "white" },
-                  "& .MuiInputBase-input": { color: "white" },
-                  "& .MuiInput-underline:before": {
-                    borderBottomColor: "white",
-                  },
-                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                    borderBottomColor: "white",
-                  },
-                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
-                }}
-                onChange={(event) => {
-                  setJobDetails({
-                    ...jobDetails,
-                    location: event.target.value,
-                  });
-                }}
-              />
+              <FormControl fullWidth>
+                <InputLabel id="state-label" style={{ color: "white" }}>
+                  State
+                </InputLabel>
+                <Select
+                  labelId="state-label"
+                  variant="standard"
+                  id="state-select"
+                  value={selectedState}
+                  label="State"
+                  onChange={handleStateChange}
+                  sx={{
+                    width: "250px",
+                    "& .MuiInputBase-input": { color: "white" },
+                    "& .MuiInputBase-root": { color: "white" },
+                    "& .MuiSelect-underline:before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiSelect-underline:hover:not(.Mui-disabled):before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiSelect-underline:before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .Mui-focused": {
+                      "& .MuiInputBase-input": { color: "white" },
+                      "& .MuiInputLabel-root": { color: "white" },
+                      "& .MuiInput-underline:before": {
+                        borderBottomColor: "white",
+                      },
+                    },
+                  }}
+                >
+                  {Object.keys(usaData).map((state) => (
+                    <MenuItem key={state} value={state}>
+                      {state}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            <br />
+            {selectedOptionLocation != "remote" && selectedState && (
+              <FormControl fullWidth>
+                <InputLabel id="city-label">City</InputLabel>
+                <Select
+                  labelId="city-label"
+                  id="city-select"
+                  variant="standard"
+                  value={selectedCity}
+                  label="City"
+                  onChange={handleCityChange}
+                  sx={{
+                    width: "250px",
+                    "& .MuiInputBase-input": { color: "white" },
+                    "& .MuiInputBase-root": { color: "white" },
+                    "& .MuiSelect-underline:before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiSelect-underline:hover:not(.Mui-disabled):before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiSelect-underline:before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .Mui-focused": {
+                      "& .MuiInputBase-input": { color: "white" },
+                      "& .MuiInputLabel-root": { color: "white" },
+                      "& .MuiInput-underline:before": {
+                        borderBottomColor: "white",
+                      },
+                    },
+                  }}
+                >
+                  {usaData[selectedState].map((city) => (
+                    <MenuItem key={city} value={city}>
+                      {city}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             )}
           </div>
           <div>

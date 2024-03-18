@@ -1,11 +1,12 @@
 .signup-page {
-  /* width: 100vw;
-    height: 100vh; */
+  min-width: 100vw;
+  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(122, 116, 116);
+  background-color: black;
 }
 
 .signup-container {
@@ -19,6 +20,7 @@
   background-color: rgb(255, 255, 255);
   box-shadow: rgba(0, 0, 0, 0.164) 1px 5px 10px;
   /* padding: 20px; */
+  background-color: #636363cc;
 }
 
 .employer-form {
@@ -27,8 +29,9 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* background-color: black; */
 }
 
 .button-group {
@@ -37,7 +40,7 @@
   justify-content: space-around;
   width: 600px;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: none;
   margin-bottom: 20px;
   border-radius: 30px;
 }
@@ -52,21 +55,23 @@ js-page {
 }
 
 .active {
-  background-color: rgba(174, 0, 255, 0.753);
+  background-color: rgba(255, 0, 0, 1);
   transition: 0.0001s ease;
 }
 
 .sliding-buttons {
-  font-size: 1.3em;
+  font-size: 0.8em;
   border: none;
   border-radius: 5px;
   padding: 10px;
   background-color: none;
+  border-radius: 20px;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.479);
 }
 
 .sliding-buttons:hover {
   cursor: pointer;
+  /* background-color: rgba(255, 0, 0, 1); */
 }
 
 .sliding-buttons:active {

@@ -36,9 +36,61 @@ const EmployerBoard = () => {
   // const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [jobData, setJobData] = useState([]);
+  const [appJS, setAppJS] = useState([]);
   useEffect(() => {
     getJobs();
+    getRecievedApplications();
   }, []);
+
+  const fetchJobSeekerData = async (jsID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/api/jsdetails/${jsID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching job seeker data for ID ${jsID}:`, error);
+      return null;
+    }
+  };
+
+  const getRecievedApplications = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/api/employerapplications/${loginCompanyData.companyName}`,
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Applications fetched successfully:", response.data);
+        const applications = response.data.applications;
+        const mergedApplications = await Promise.all(
+          applications.map(async (application) => {
+            const jobSeekerData = await fetchJobSeekerData(application.jsID);
+            const jsdetails = jobSeekerData.jsdetails[0];
+            return { ...application, jsdetails };
+          })
+        );
+        // Process the merged applications data as needed
+        setAppJS(mergedApplications);
+        console.log(mergedApplications);
+      } else {
+        console.error("Failed to fetch applications");
+      }
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+  };
 
   const getJobs = async () => {
     try {
@@ -99,7 +151,7 @@ const EmployerBoard = () => {
       case 2:
         return (
           <div>
-            <CandidateList />
+            <CandidateList applicationData={appJS} />
           </div>
         );
       case 3:

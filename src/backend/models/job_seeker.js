@@ -5,7 +5,10 @@ const mongoose = require('mongoose');
 const jsSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
-    jsEmail: String,
+    jsEmail: {
+      type:String,
+      required:true
+  },
     jsPassword: String,
     profession: String,
     address:String,

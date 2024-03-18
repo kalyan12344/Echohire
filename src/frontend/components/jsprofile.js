@@ -1,8 +1,8 @@
+// **KALYAN **
 import React, { useState } from "react";
 import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
 import "../styling/jsprofile.css";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 
 const JsProfile = ({ loginData, username }) => {
   const [skills, setSkills] = useState([]);
@@ -99,18 +99,3 @@ const JsProfile = ({ loginData, username }) => {
 
 export default JsProfile;
 
-// const JsProfile = () => {
-//   return (
-//     <div>
-//       <h1>Kalyan Raju Keerthipati</h1>
-//       <div>
-//         <h2>
-//           skills <button onClick={handlePlusSkills}>+</button>
-
-//         </h2>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default JsProfile;

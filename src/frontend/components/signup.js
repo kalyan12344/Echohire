@@ -1,8 +1,8 @@
+// ***** HARSHIT****
 import { Button, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import "../styling/signup.css";
 import Autocomplete from "@mui/material/Autocomplete";
-import employerSignup from "../../assets/employer_signup.png";
 import employer from "../../assets/employer.jpeg";
 import js from "../../assets/job_seeker.jpeg";
 import { useNavigate } from "react-router-dom";
@@ -11,16 +11,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 
-// import RaisedButton from "@mui/material";
-
 const EmployerSignupForm = () => {
   const navigate = useNavigate();
   const industries = [
-    // { label: "Technology", value: "Technology" },
-    // { label: "Finance", value: "Finance" },
-    // { label: "Healthcare", value: "Healthcare" },
-    // { label: "Education", value: "Education" },
-    // { label: "Manufacturing", value: "Manufacturing" },
     "Technology",
     "Finance",
     "Healthcare",
@@ -60,10 +53,6 @@ const EmployerSignupForm = () => {
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = () => {
       console.log(reader.result);
-      // setEmployerDetails({
-      //   ...employerDetails,
-      //   companyLogo: reader.result,
-      // });
     };
 
     reader.onerror = (error) => {
@@ -271,7 +260,7 @@ const EmployerSignupForm = () => {
           variant="contained"
           sx={{ width: "250px", marginTop: "30px" }}
           onClick={handleEmployerSignUP}
-          //   disabled={isDisabled}
+        //   disabled={isDisabled}
         >
           Signup as Employer
         </Button>{" "}
@@ -297,7 +286,7 @@ const EmployerSignupForm = () => {
     </div>
   );
 };
-
+// **** PAVAN ***
 const JobSeekerSignupForm = () => {
   const navigate = useNavigate();
 
@@ -518,11 +507,6 @@ const JobSeekerSignupForm = () => {
           sx={{ width: "250px", marginTop: "30px" }}
           onClick={handleJSSignUP}
           disabled={
-            //   jsDetails.firstName != "" &&
-            //   jsDetails.lastName.length > 0 &&
-            //   jsDetails.profession.length > 0 &&
-            // isValidEmail && isValidPassword && isPasswordSame
-            // true
             false
           }
         >
@@ -540,7 +524,7 @@ const JobSeekerSignupForm = () => {
     </div>
   );
 };
-
+// HARSHIT
 const SignupPage = () => {
   const [activeTab, setActiveTab] = useState("employer");
 
@@ -548,32 +532,20 @@ const SignupPage = () => {
     setActiveTab(tab);
   };
 
-  const handleSubmit = () => {
-    if (activeTab === "employer") {
-      // Code to submit employer form
-      console.log("Submitting employer form");
-    } else if (activeTab === "jobSeeker") {
-      // Code to submit job seeker form
-      console.log("Submitting job seeker form");
-    }
-  };
-
   return (
     <div className="signup-page">
       <div className="button-group">
         <button
           onClick={() => handleTabChange("employer")}
-          className={`sliding-buttons ${
-            activeTab === "employer" ? "active" : "inactive"
-          }`}
+          className={`sliding-buttons ${activeTab === "employer" ? "active" : "inactive"
+            }`}
           sx={{ color: "white" }}
         >
           Employer
         </button>
         <button
-          className={`sliding-buttons ${
-            activeTab === "jobSeeker" ? "active" : "inactive"
-          }`}
+          className={`sliding-buttons ${activeTab === "jobSeeker" ? "active" : "inactive"
+            }`}
           onClick={() => handleTabChange("jobSeeker")}
         >
           Job Seeker

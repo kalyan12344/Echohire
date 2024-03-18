@@ -1,3 +1,4 @@
+//  ** SUJITHA **
 const express = require('express');
 const Job = require('../models/jobs');
 const router = new express.Router();
@@ -35,14 +36,14 @@ router.post("/api/jobpost", async (req, res) => {
       await newJob.save();
   
       // Send a success response
-      res.status(201).json({ message: "Job posted successfully", job: newJob });
+      res.status(200).json({ message: "Job posted successfully", job: newJob });
     } catch (error) {
       // Handle errors
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
-
+// Vyjayanthi
   router.get("/api/jobs/:companyName", async (req, res) => {
     try {
       // Extract the company name from the request parameters

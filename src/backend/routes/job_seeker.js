@@ -1,3 +1,4 @@
+// **** PAVAN ****
 const express = require('express');
 const Js = require('../models/job_seeker');
 const router = new express.Router();
@@ -15,7 +16,7 @@ router.post("/api/js/signup", async (req, res) => {
       } else {
         const jobseeker = new Js(req.body);
         await jobseeker.save();
-        res.status(201).json(jobseeker);
+        res.status(200).json(jobseeker);
       }
     } catch (error) {
       console.error(error);

@@ -1,18 +1,18 @@
+// *** NANDHU **
 const express = require('express');
 const Employer = require('../models/employer');
 const Js = require('../models/job_seeker');
 const router = new express.Router();
 
 router.post("/api/login", async (req, res) => {
+
     try {
       const { email, password } = req.body;
   
       // Check if the user is an employer
-      console.log(email, password);
       const employer = await Employer.findOne({ companyEmail: email });
       const jobSeeker = await Js.findOne({ jsEmail: email });
   
-      console.log(employer, jobSeeker);
       if (employer) {
         // Validate employer's password
   
@@ -51,16 +51,17 @@ router.post("/api/login", async (req, res) => {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
-  });
+  }
+  );
 
-// API Endpoint for Employer Signup
+// API Endpoint for Employer Signup - ***** HARSHIT ******
 router.post("/api/employers/signup", async (req, res) => {
     try {
       console.log(req.body);
   
       const newEmployer = new Employer(req.body);
       await newEmployer.save();
-      res.status(201).json(newEmployer);
+      res.status(200).json(newEmployer);
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");

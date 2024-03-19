@@ -1,3 +1,4 @@
+// **** PAVAN ****
 const express = require("express");
 const Js = require("../models/job_seeker");
 const router = new express.Router();
@@ -26,31 +27,13 @@ router.post("/api/js/signup", async (req, res) => {
     } else {
       const jobseeker = new Js(req.body);
       await jobseeker.save();
-      res.status(201).json(jobseeker);
+      res.status(200).json(jobseeker);
     }
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
 });
-
-router.get("/api/jsdetails/:jsID", async (req, res) => {
-  try {
-    // Extract the company name from the request parameters
-    const { jsID } = req.params;
-    console.log(jsID);
-    // Query the database for jobs associated with the given company name
-    const jsdetails = await Js.find({ _id: jsID });
-
-    // Send the retrieved jobs as a response
-    res.status(200).json({ jsdetails });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
-
-module.exports = router;
 
 router.get("/api/js/email/:id", async (req, res) => {
   try {

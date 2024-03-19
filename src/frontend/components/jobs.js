@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+// *** Vyjayanthi **
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -11,10 +12,7 @@ import {
 import "../styling/jobs.css";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Delete } from "@mui/icons-material";
 import EditedJobPostform from "./post-edited-job";
-import axios from "axios";
-import { color } from "framer-motion";
 
 const ITEMS_PER_PAGE = 4;
 

@@ -5,7 +5,10 @@ const employerSchema = new mongoose.Schema({
     companyName: String,
     companyType: String,
     companyDescription: String,
-    companyEmail: String,
+    companyEmail: {
+      type:String,
+      required:true
+  },
     companyPassword: String,
     companyLogo: String,
   });

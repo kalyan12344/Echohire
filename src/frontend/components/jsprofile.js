@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+// **KALYAN **
+import React, { useState } from "react";
 import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
 import "../styling/jsprofile.css";
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
+import { Button } from "@mui/material";
 
 const JsProfile = ({ loginData, username }) => {
   const [skills, setSkills] = useState([...loginData.skills]);

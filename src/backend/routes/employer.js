@@ -1,9 +1,61 @@
+// *** NANDHU **
+const express = require('express');
+const Employer = require('../models/employer');
+const Js = require('../models/job_seeker');
 const express = require("express");
 const Employer = require("../models/employer");
 const Js = require("../models/job_seeker");
 const router = new express.Router();
 
 router.post("/api/login", async (req, res) => {
+
+    try {
+      const { email, password } = req.body;
+  
+      // Check if the user is an employer
+      const employer = await Employer.findOne({ companyEmail: email });
+      const jobSeeker = await Js.findOne({ jsEmail: email });
+  
+      if (employer) {
+        // Validate employer's password
+  
+        let isPasswordValid = password === employer.companyPassword;
+  
+        if (!isPasswordValid) {
+          console.log(isPasswordValid);
+          return res.status(400).json({ message: "Invalid email or password" });
+        }
+        console.log(res);
+        return res.status(200).json({
+          message: "Login successful",
+          role: "employer",
+          data: employer,
+        });
+      }
+  
+      // Check if the user is a job seeker
+      if (jobSeeker) {
+        // Validate job seeker's password
+        let isPasswordValid = password === jobSeeker.jsPassword;
+        console.log(isPasswordValid);
+        if (!isPasswordValid) {
+          return res.status(400).json({ message: "Invalid email or password" });
+        }
+        return res.status(200).json({
+          message: "Login successful",
+          role: "jobseeker",
+          data: jobSeeker,
+        });
+      }
+  
+      // If the user is not found in either table, return an error message
+      return res.status(400).json({ message: "Invalid email or password" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+  );
   try {
     const { email, password } = req.body;
 
@@ -59,8 +111,19 @@ router.post("/api/login", async (req, res) => {
   }
 });
 
-// API Endpoint for Employer Signup
+// API Endpoint for Employer Signup - ***** HARSHIT ******
 router.post("/api/employers/signup", async (req, res) => {
+    try {
+      console.log(req.body);
+  
+      const newEmployer = new Employer(req.body);
+      await newEmployer.save();
+      res.status(200).json(newEmployer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
   try {
     console.log(req.body);
 

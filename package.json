@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "@buildo/bento-design-system": "^0.22.6",
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.8",
-    "@mui/material": "^5.15.7",
+    "@mui/material": "^5.15.13",
     "@mui/styled-engine-sc": "^6.0.0-alpha.15",
     "@tabler/icons-react": "^2.47.0",
     "@testing-library/jest-dom": "^5.17.0",

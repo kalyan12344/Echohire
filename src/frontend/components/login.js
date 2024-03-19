@@ -59,7 +59,7 @@ const Login = () => {
         email,
         password,
       });
-
+      console.log(response);
       if (response.status === 200) {
         // Successful login
         console.log("Login successful");
@@ -76,8 +76,17 @@ const Login = () => {
         // You can redirect to a different page or perform other actions here
       }
     } catch (error) {
-      console.error("Error logging in:", error);
-      // setError(error.response.data.message);
+      // if (error.response.status === 404) {
+      //   // console.error("Error logging in:", error);
+      //   // setError(error.response.data.message);
+      //   setErrorMessage("user not found");
+      // } else {
+      //   console.log("not unf");
+      //   setErrorMessage("");
+
+      // }
+
+      console.log(error);
     }
   };
 
@@ -113,6 +122,7 @@ const Login = () => {
             label="Email"
             variant="standard"
             value={email}
+            error={errorMessage === "user not found" ? true : false}
             sx={{ width: "250px" }}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -124,6 +134,8 @@ const Login = () => {
             label="Password"
             variant="standard"
             type="password"
+            error={errorMessage === "wrong password" ? true : false}
+            helperText={errorMessage ? errorMessage : false}
             value={password}
             sx={{ width: "250px" }}
             onChange={(e) => {

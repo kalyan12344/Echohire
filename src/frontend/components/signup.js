@@ -388,7 +388,7 @@ const JobSeekerSignupForm = () => {
     dob: "",
     employement_history: "",
     education: "",
-    skills: "",
+    skills: [],
     cover_letter: "",
     references: "",
     image: "",

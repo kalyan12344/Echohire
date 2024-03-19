@@ -15,7 +15,7 @@ const jsSchema = new mongoose.Schema({
   dob: Date,
   employement_history: String,
   education: String,
-  skills: String,
+  skills: [String],
   cover_letter: String,
   references: String,
   image: String,

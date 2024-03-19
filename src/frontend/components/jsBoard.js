@@ -26,11 +26,14 @@ const JsBoard = () => {
   const location = useLocation();
   const { loginJsData } = location.state;
   console.log(loginJsData);
-  const jsid=loginJsData._id
+  const jsid = loginJsData._id;
   // console.log(loginJsData._id)
   let username = loginJsData.firstName + " " + loginJsData.lastName;
   username = username.toUpperCase();
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(() => {
+    // Get the selected tab index from local storage or default to 0 (Dashboard) if not found
+    return parseInt(localStorage.getItem("selectedTabIndex")) || 0;
+  });
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [jobData, setJobData] = useState([]);
   const [jobApplications, setJobApplications] = useState([]);
@@ -110,6 +113,7 @@ const JsBoard = () => {
 
   const handleChange = (e, newValue) => {
     setValue(newValue);
+    localStorage.setItem("selectedTabIndex", newValue); // Save selected tab index to local storage
     console.log(newValue);
   };
 
@@ -231,39 +235,6 @@ const JsBoard = () => {
             />
           </Tabs>
         </div>
-        {/* <div>
-          <Button
-            onClick={openDrawer}
-            variant="contained"
-            sx={{
-              borderRadius: "30px",
-              backgroundColor: "rgba(255, 0, 0, 0.75)",
-              "&:hover": {
-                backgroundColor: "rgba(255, 0, 0, 1)",
-              },
-            }}
-            style={{
-              color: "white",
-            }}
-          >
-            POST JOB
-          </Button>
-          <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
-            <Box
-              sx={{
-                width: 600,
-                padding: "20px",
-                height: 1000,
-                backgroundColor: "#1a1819",
-              }}
-            >
-              <JobPostform
-                // username={loginCompanyData.companyName}
-                onJobPost={handleJobPost}
-              />
-            </Box>
-          </Drawer>
-        </div> */}
         <div>
           <Button
             variant="contained"

@@ -36,7 +36,6 @@ const JobApplicationForm = ({}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add code here to handle form submission, e.g., send data to server
     console.log(formData);
     try {
       const response = await axios.post(
@@ -62,7 +61,7 @@ const JobApplicationForm = ({}) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/jsdetails/${jsid}`,
+        `http://localhost:5001/api/js/email/${jsid}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +81,7 @@ const JobApplicationForm = ({}) => {
       const loginJsData = response.data.js;
       console.log(loginJsData, "loginData");
 
-      navigate(`/jsboard`, { state: { loginJsData } });
+      // navigate(`/jsboard`, { state: { loginJsData } });
     } catch (error) {
       if (error.message === "Request failed with status code 409") {
         console.log("409");

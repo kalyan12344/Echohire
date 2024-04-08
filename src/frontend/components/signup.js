@@ -103,7 +103,7 @@ const EmployerSignupForm = () => {
         }
       );
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log("Employer signed up successfully");
       } else {
         console.error("Failed to sign up employer");
@@ -217,7 +217,7 @@ const EmployerSignupForm = () => {
           error={!isValidEmail}
           helperText={!isValidEmail ? "Invalid email address" : ""}
           onChange={(e) => {
-            console.log(e.toLowerCase());
+            // console.log(e.toLowerCase());
             setEmployerDetails({
               ...employerDetails,
               companyEmail: e.target.value.toLowerCase(),
@@ -438,7 +438,7 @@ const JobSeekerSignupForm = () => {
             },
           })
           .then((response) => {
-            if (response.status === 201) {
+            if (response.status === 200) {
               console.log("js signed up successfully");
               navigate("/Tick");
             } else {

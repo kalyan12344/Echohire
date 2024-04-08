@@ -90,7 +90,7 @@ const JobPostform = ({ username, onJobPost }) => {
         }
       );
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log("job posted successfully");
         onJobPost(response.data.job);
       } else {

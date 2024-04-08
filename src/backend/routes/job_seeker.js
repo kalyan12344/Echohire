@@ -17,7 +17,6 @@ const router = new express.Router();
 
 router.post("/api/js/signup", async (req, res) => {
   try {
-    console.log(req.body);
     const { jsEmail } = req.body;
     console.log(jsEmail);
     const existingJobSeeker = await Js.findOne({ jsEmail });
@@ -26,6 +25,7 @@ router.post("/api/js/signup", async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     } else {
       const jobseeker = new Js(req.body);
+      console.log(jobseeker);
       await jobseeker.save();
       res.status(200).json(jobseeker);
     }

@@ -4,7 +4,6 @@ import Chip from "@mui/material/Chip";
 import "../styling/jsprofile.css";
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
-import { Button } from "@mui/material";
 
 const JsProfile = ({ loginData, username }) => {
   const [skills, setSkills] = useState([...loginData.skills]);
@@ -189,7 +188,7 @@ const JsProfile = ({ loginData, username }) => {
 
   return (
     <div className="profile" style={{ color: "white" }}>
-      <div className="pro-img" onDoubleClick={handleImageDoubleClick}>
+      {/* <div className="pro-img" onDoubleClick={handleImageDoubleClick}>
         {" "}
         {isEditingImage ? (
           <input type="file" onChange={handleImageChange} accept="image/*" />
@@ -200,7 +199,7 @@ const JsProfile = ({ loginData, username }) => {
             style={{ maxWidth: "200px" }}
           />
         )}{" "}
-      </div>
+      </div> */}
       <div style={{ display: "flex" }}>
         <div
           className="personal-info"

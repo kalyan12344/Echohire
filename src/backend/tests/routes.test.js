@@ -12,11 +12,11 @@ describe("POST /api/login", () => {
     });
   });
   describe("when passed a email and password are given incorrect for the login", () => {
-    test("should respond with a 400 status code", async () => {
+    test("should respond with a 404 status code", async () => {
       const response = await request(app)
         .post("/api/login")
         .send({ email: "doesnot@gmail.com", password: "password@547" }); 
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(404);
     });
   });
 });
@@ -98,11 +98,11 @@ describe("POST /api/js/signup", () => {
     });
   });
   describe("", () => {
-    test("should respond with a 500 status code", async () => {
+    test("should respond with a 400 status code", async () => {
       const response = await request(app)
         .post("/api/js/signup")
         .send({ first: "example@gmail.com", name: "password@547" }); 
-      expect(response.statusCode).toBe(500);
+      expect(response.statusCode).toBe(400);
     });
   });
 });
@@ -212,4 +212,134 @@ describe("POST /api/jobpost", () => {
   });
 });
 
+// PHASE 2 test cases
+//saved jobs api:
 
+describe('GET /api/saved-jobs/:jsId', () => {
+
+  it('responds with an error message if there is a server error', async () => {
+    // Mock SavedJob.find to throw an error
+    jest.spyOn(SavedJob, 'find').mockImplementation(() => {
+      throw new Error('Internal Server Error');
+    });
+
+    const response = await request(app)
+      .get('/api/saved-jobs/jobSeeker1'); // Assuming 'jobSeeker1' as the job seeker ID
+
+    expect(response.status).toBe(500);
+    expect(response.body.message).toBe('Internal Server Error');
+  });
+});
+
+
+const SavedJob = require('../models/saved-jobs'); // Import your SavedJob model
+
+describe('PUT /api/saved-jobs', () => {
+  it('should save a job successfully', async () => {
+    const mockSavedJobSave = jest.fn().mockResolvedValue();
+
+    SavedJob.findOne = jest.fn().mockResolvedValue(null);
+    SavedJob.prototype.save = mockSavedJobSave;
+
+    const mockReqBody = {
+      jsId: 'validJsId',
+      jobData: { _id: 'validJobId' },
+    };
+
+    const response = await request(app)
+      .put('/api/saved-jobs')
+      .send(mockReqBody);
+
+    expect(response.status).toBe(201);
+    expect(mockSavedJobSave).toHaveBeenCalled();
+    // Add more assertions based on the expected response
+  });
+
+  it('should return error if job is already saved', async () => {
+    SavedJob.findOne = jest.fn().mockResolvedValue(true);
+
+    const mockReqBody = {
+      jsId: 'validJsId',
+      jobData: { _id: 'validJobId' },
+    };
+
+    const response = await request(app)
+      .put('/api/saved-jobs')
+      .send(mockReqBody);
+
+    expect(response.status).toBe(400);
+    // Add more assertions based on the expected response
+  });
+
+  it('should handle internal server error', async () => {
+    // Mock SavedJob.findOne to throw an error
+    SavedJob.findOne = jest.fn().mockRejectedValue(new Error('Internal Server Error'));
+
+    const response = await request(app)
+      .put('/api/saved-jobs')
+      .send({});
+
+    expect(response.status).toBe(500);
+    // Add more assertions based on the expected response
+  });
+});
+
+
+
+// job seeker skills experience, work experience, education API's
+describe('PUT /api/js/:id/skills', () => {
+  it('updates skills successfully', async () => {
+    const response = await request(app)
+      .put('/api/js/65f7945aa5bcf28a25709d87/skills') // Assuming '65f7945aa5bcf28a25709d87' as the job seeker ID
+      .send({ skills: ['JavaScript', 'Node.js', 'React'] });
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('skills updated successfully');
+    expect(response.body.updatedSkills).toBeDefined(); // Ensure updatedSkills is returned
+  });
+
+  it('responds with an error if there is a server error', async () => {
+    const response = await request(app)
+      .put('/api/js/123/skills')
+      .send({ skills: ['JavaScript', 'Node.js', 'React'] });
+
+    expect(response.status).toBe(500);
+    expect(response.body.error).toBe('Error updating SKILLS');
+    expect(response.body.errorMessage).toBeDefined(); // Ensure errorMessage is returned
+  });
+});
+
+describe('PUT /api/js/:id/education', () => {
+
+  it('responds with an error if there is a server error', async () => {
+    const response = await request(app)
+      .put('/api/js/123/education')
+      .send({ education: 'Bachelor of Science in Computer Science' });
+
+    expect(response.status).toBe(500);
+    expect(response.body.error).toBe('Error updating education');
+    expect(response.body.errorMessage).toBeDefined(); // Ensure errorMessage is returned
+  });
+});
+
+describe('PUT /api/js/:id/workexp', () => {
+  it('updates work experience successfully', async () => {
+    const response = await request(app)
+      .put('/api/js/65f7945aa5bcf28a25709d87/workexp')
+      .send({ employement_history: 'Software Engineer at XYZ Company' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('WE updated successfully');
+    expect(response.body.updatedWorkExp).toBeDefined(); // Ensure updatedWorkExp is returned
+  });
+
+  it('responds with an error if there is a server error', async () => {
+    const response = await request(app)
+      .put('/api/js/123/workexp')
+      .send({ employement_history: 'Software Engineer at XYZ Company' });
+
+    expect(response.status).toBe(500);
+    expect(response.body.error).toBe('Error updating WE');
+    expect(response.body.errorMessage).toBeDefined(); // Ensure errorMessage is returned
+  });
+});

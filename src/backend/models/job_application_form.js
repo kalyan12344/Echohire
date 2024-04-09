@@ -23,7 +23,7 @@ const ApplicationFormSchema = new mongoose.Schema({
     termsAgreed: Boolean,
     jsId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Js',
+        ref: 'JobSeeker',
       },
       jobId:{
         type: mongoose.Schema.Types.ObjectId,

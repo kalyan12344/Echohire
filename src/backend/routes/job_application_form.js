@@ -128,10 +128,22 @@ router.get("/api/employerapplications/:employerID", async (req, res) => {
     const { employerID } = req.params;
 
     // Query the database for applications associated with the given employer ID
-    const applications = await ApplicationForm.find({ employerID });
-
-    // Send the retrieved applications as a response
-    res.status(200).json({ applications });
+    const applications = await ApplicationForm.aggregate([
+      {
+        $lookup: {
+          from: "Job", // Replace with your Job collection name
+          localField: "jobId",
+          foreignField: "_id",
+          as: "jobDetails"
+        }
+      },
+      {
+        $match: {
+          "jobDetails.companyName": employerID
+        }
+      }
+    ]);
+    console.log(applications)
   } catch (error) {
     console.error(
       `Error fetching applications for employer ID ${employerID}:`,

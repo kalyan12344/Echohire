@@ -9,16 +9,22 @@ import {
   Box,
   Chip,
 } from "@mui/material";
+import axios from "axios";
 import "../styling/jobs.css";
 import { color } from "framer-motion";
+import FolderDeleteIcon from "@mui/icons-material/FolderDelete";
 
 const ITEMS_PER_PAGE = 4;
-const JobCard = ({ jobData }) => {
+const JobCard = ({ jobData, onWithdrawApplication }) => {
   const statusColor = {
     Applied: "white",
     InConsideration: "green",
     Success: "green",
     Rejected: "red",
+  };
+
+  const handleWithdrawClick = () => {
+    onWithdrawApplication(jobData._id);
   };
 
   return (
@@ -52,6 +58,9 @@ const JobCard = ({ jobData }) => {
             width: "100px",
             display: "flex",
             justifyContent: "center",
+            alignItems: "right",
+            flexDirection: "column",
+            gap: "30px",
           }}
         >
           {" "}
@@ -61,6 +70,9 @@ const JobCard = ({ jobData }) => {
               backgroundColor: statusColor[jobData.status],
             }}
           />
+          <Button onClick={handleWithdrawClick}>
+            <FolderDeleteIcon sx={{ color: "red" }} />
+          </Button>
         </div>
       </div>
     </Card>
@@ -69,17 +81,48 @@ const JobCard = ({ jobData }) => {
 
 const MyApplications = ({ applications }) => {
   console.log(applications);
-
+  const [totApplications, setApplications] = useState(...applications);
+  console.log(applications);
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+  const handleWithdrawApplication = async (applicationId) => {
+    console.log(applicationId);
+
+    try {
+      // Make a DELETE request to the API endpoint with the application ID
+      const response = await axios.delete(
+        `http://localhost:5001/api/applications/${applicationId}`
+      );
+
+      // If the request is successful (status code 200-299), return true
+      if (response.status >= 200 && response.status < 300) {
+        const updatedApplications = totApplications.filter(
+          (app) => app._id !== applicationId
+        );
+        setApplications(updatedApplications);
+        return true;
+      } else {
+        // Handle unsuccessful request
+        console.error("Failed to delete application:", response.statusText);
+        return false;
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Error deleting application:", error.message);
+      return false;
+    }
+  };
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pageCount = Math.ceil(applications.length / ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(totApplications?.length / ITEMS_PER_PAGE);
   // Ensure that the last page is correctly set if there are fewer items than the items per page
-  const lastPage = Math.max(1, Math.ceil(applications.length / ITEMS_PER_PAGE));
+  const lastPage = Math.max(
+    1,
+    Math.ceil(totApplications?.length / ITEMS_PER_PAGE)
+  );
   const paginatedData = applications.slice(offset, offset + ITEMS_PER_PAGE);
 
   return (
@@ -96,9 +139,13 @@ const MyApplications = ({ applications }) => {
         <div>
           <h2 style={{ color: "white" }}>Applied Jobs</h2>
         </div>
-        {applications.length !== 0 ? (
-          paginatedData.map((job, index) => (
-            <JobCard key={job._id} jobData={job} />
+        {totApplications?.length !== 0 ? (
+          paginatedData?.map((job, index) => (
+            <JobCard
+              key={job._id}
+              jobData={job}
+              onWithdrawApplication={handleWithdrawApplication}
+            />
           ))
         ) : (
           <h3 style={{ color: "orange" }}>No jobs Posted Yet</h3>

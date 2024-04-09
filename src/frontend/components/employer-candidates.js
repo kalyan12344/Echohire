@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const CandidateList = ({ applicationData }) => {
   const [reload, setReload] = useState(false);
-
+  console.log("applicationData", applicationData);
   const handleCardReject = (details) => {
     updateApplicationStatus(details._id, "Rejected");
   };

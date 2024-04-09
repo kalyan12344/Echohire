@@ -141,7 +141,7 @@ const JsBoard = () => {
           </div>
         );
       case 3:
-        return <SavedJobs />;
+        return <SavedJobs loginData={loginJsData} />;
 
       case 4:
         return <JsProfile loginData={loginJsData} username={username} />;

@@ -53,6 +53,31 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
     navigate(`/applicationform/${loginData._id}/${jobData._id}`);
   };
 
+  const handleSave = async () => {
+    let jsId = loginData._id;
+    console.log(jsId, jobData);
+    // navigate(`/applicationform/${loginData._id}/${jobData._id}`);
+    try {
+      // Make a PUT request to the backend API endpoint
+      const response = await axios.put("http://localhost:5001/api/saved-jobs", {
+        jsId,
+        jobData,
+      });
+
+      // Check if the request was successful
+      if (response.status === 201) {
+        console.log("Job saved successfully");
+        return true; // Return true to indicate success
+      } else {
+        console.error("Failed to save job");
+        return false; // Return false to indicate failure
+      }
+    } catch (error) {
+      console.error("Error saving job:", error);
+      return false; // Return false to indicate failure
+    }
+  };
+
   return (
     <Card
       className="job-card "
@@ -103,7 +128,7 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
           marginRight: "10px",
         }}
       >
-        <Button variant="contained" onClick={handleApply}>
+        <Button variant="contained" onClick={handleSave}>
           Save
         </Button>
         <Button variant="contained" onClick={handleApply}>
@@ -126,7 +151,8 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
     skills: [],
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [filteredJobs, setFilteredJobs] = useState(jobs); // Initialize with all jobs
+  const [filteredJobs, setFilteredJobs] = useState(jobs);
+  // Initialize with all jobs
 
   useEffect(() => handleApplyFilters(), []);
 

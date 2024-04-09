@@ -1,4 +1,3 @@
-// *** Vyjayanthi **
 import React, { useState } from "react";
 import {
   Card,
@@ -13,10 +12,12 @@ import "../styling/jobs.css";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditedJobPostform from "./post-edited-job";
+import axios from "axios";
 
 const ITEMS_PER_PAGE = 4;
 
 const JobCard = ({ jobData, onDelete, onUpdate }) => {
+  console.log(jobData);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editedJobData, setEditedJobData] = useState({ ...jobData });
 
@@ -27,19 +28,27 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
   const closeDrawer = () => {
     setDrawerOpen(false);
   };
+
   const handleDeleteJob = () => {
     console.log(jobData);
     onDelete(jobData.jobID);
   };
 
-  const handleUpdateJobs = () => {
-    console.log(editedJobData);
-    onUpdate(editedJobData);
+  const handleUpdateJobs = (updatedData) => {
+    console.log(updatedData);
+    onUpdate(updatedData);
     closeDrawer();
   };
+
+  const handleEditJobDataChange = (updatedData) => {
+    setEditedJobData(updatedData);
+  };
+
+  console.log(editedJobData);
+
   return (
     <Card
-      className="job-card "
+      className="job-card"
       style={{
         backgroundColor: "#202020cc",
         display: "flex",
@@ -52,7 +61,6 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
           <Typography variant="h5" component="div" sx={{ color: "white" }}>
             {jobData.title}
           </Typography>
-
           <Typography variant="body2" sx={{ color: "white" }}>
             Location: {jobData.location}
           </Typography>
@@ -74,12 +82,7 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
         }}
       >
         <div className="edit-icon">
-          <EditIcon
-            sx={{ color: "orange" }}
-            jobData={jobData}
-            onClick={openDrawer}
-            onUpdate={handleUpdateJobs}
-          />
+          <EditIcon sx={{ color: "orange" }} onClick={openDrawer} />
         </div>
         <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
           <Box
@@ -90,7 +93,11 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
               backgroundColor: "#1a1819",
             }}
           >
-            <EditedJobPostform job={jobData} onUpdate={handleUpdateJobs} />
+            <EditedJobPostform
+              job={editedJobData}
+              onUpdate={handleUpdateJobs}
+              onChange={handleEditJobDataChange}
+            />
           </Box>
         </Drawer>
         <div className="delete-icon">
@@ -103,12 +110,7 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
 
 const JobCardList = ({ username, jobs }) => {
   const companyName = username.username;
-  const jobData = jobs;
-  console.log(jobs);
-  // const jobData = [...jobs];
-  console.log(companyName);
-
-  console.log(jobData);
+  const [jobData, setJobData] = useState(jobs);
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = (event, value) => {
@@ -118,13 +120,52 @@ const JobCardList = ({ username, jobs }) => {
   const handleDeleteJob = (jobID) => {
     console.log("Deleting job with ID:", jobID);
     const updatedJobData = jobData.filter((job) => job.jobID !== jobID);
+    setJobData(updatedJobData);
   };
-  const handleUpdateJob = (updatedJob) => {
-    console.log("Deleting job with ID:", updatedJob);
-    const updatedJobData = jobData.map((job) =>
-      job.jobID === updatedJob.jobID ? updatedJob : job
-    );
+
+  // const handleUpdateJob = (updatedJob) => {
+  //   console.log(updatedJob);
+  //   console.log("Updating job with ID:", updatedJob._id);
+  //   const updatedJobData = jobData.map((job) =>
+  //     job._id === updatedJob._id ? updatedJob : job
+
+  //   );
+  //   console.log(updatedJobData);
+  //   setJobData(updatedJobData);
+  // };
+
+  const handleUpdateJob = async (updatedJob) => {
+    try {
+      console.log(updatedJob);
+      console.log("Updating job with ID:", updatedJob._id);
+
+      // Send updated job data to backend
+      const response = await axios.put(
+        `http://localhost:5001/api/jobupdate/${updatedJob._id}`,
+        updatedJob
+      );
+
+      // If the request is successful (status code 200-299), handle the updated job data
+      if (response.status >= 200 && response.status < 300) {
+        const updatedJobFromServer = response.data;
+        console.log("Job updated on the server:", updatedJobFromServer);
+
+        // Update the job data in your frontend state
+        const updatedJobData = jobData.map((job) =>
+          job._id === updatedJob._id ? updatedJobFromServer : job
+        );
+        setJobData(updatedJobData);
+      } else {
+        // Handle unsuccessful request
+        console.error("Failed to update job:", response.statusText);
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Error updating job:", error.message);
+    }
   };
+  console.log(jobData);
+
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageCount = Math.ceil(jobData.length / ITEMS_PER_PAGE);
   const paginatedData = jobData.slice(offset, offset + ITEMS_PER_PAGE);
@@ -162,10 +203,8 @@ const JobCardList = ({ username, jobs }) => {
           sx={{
             "& .MuiPaginationItem-root": {
               color: "white",
-              // backgroundColor: "red",
             },
             "& .Mui-selected": {
-              // backgroundColor: "#202020cc",
               color: "red",
               fontSize: "20px",
             },

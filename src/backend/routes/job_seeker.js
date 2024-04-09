@@ -35,6 +35,20 @@ router.post("/api/js/signup", async (req, res) => {
   }
 });
 
+router.get("/api/jsdetails/:jsID", async (req, res) => {
+  try {
+    const { jsID } = req.params;
+    const jobSeeker = await Js.find({ _id: jsID });
+    if (!jobSeeker) {
+      return res.status(404).json({ message: "Job seeker not found" });
+    }
+    res.status(200).json(jobSeeker);
+  } catch (error) {
+    console.error(`Error fetching job seeker data for ID ${jsID}:`, error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 router.get("/api/js/email/:id", async (req, res) => {
   try {
     const id = req.params.id;

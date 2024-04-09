@@ -2,6 +2,7 @@ import "../styling/job-post.css";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Button } from "@mui/material";
+import axios from "axios";
 
 import {
   FormControl,
@@ -30,16 +31,12 @@ const theme = createTheme({
   },
 });
 
-const EditedJobPostform = ({ job, onUpdate }) => {
+const EditedJobPostform = ({ job, onUpdate, onChange }) => {
+  console.log(job);
   const [selectedOptionLocation, setSelectedOptionLocation] = useState(
     job.location ? "onsite" : "remote"
   );
-  const [discloseSalary, setDiscloseSalary] = useState(
-    job?.salary ? true : false
-  );
-
-  //   console.log(discloseSalary);
-
+  const [discloseSalary, setDiscloseSalary] = useState(Boolean(job.salary));
   const [selectedOptionType, setSelectedOptionType] = useState(
     job.type.toLowerCase()
   );
@@ -52,21 +49,41 @@ const EditedJobPostform = ({ job, onUpdate }) => {
     type: job.type,
     deadline: job.deadline,
     salary: job?.salary,
+    _id: job._id,
   });
   const handleToggle = () => {
     setDiscloseSalary(!discloseSalary);
   };
 
   const handleOptionChangeLoc = (event) => {
-    const value = event.target.value;
-    setSelectedOptionLocation(value);
+    setSelectedOptionLocation(event.target.value);
+    onChange({ ...job, location: event.target.value });
   };
   const handleOptionChangeType = (event) => {
-    const value = event.target.value;
-    setSelectedOptionType(value);
-    setJobDetails({ ...jobDetails, type: value });
+    setSelectedOptionType(event.target.value);
+    onChange({ ...job, type: event.target.value });
   };
-  const handleEditPostJob = () => {
+  const handleEditPostJob = async () => {
+    try {
+      // Assuming jobDetails contains the updated job data
+      const response = await axios.put(
+        `http://localhost:5001/api/jobupdate/${jobDetails._id}`,
+        jobDetails
+      );
+
+      // Check if the request was successful (status code 200-299)
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Job updated successfully:", response.data);
+        // Handle any further actions after successful update
+      } else {
+        // Handle unsuccessful request
+        console.error("Failed to update job:", response.statusText);
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Error updating job:", error.message);
+    }
+
     console.log(jobDetails);
     onUpdate(jobDetails);
   };
@@ -329,6 +346,10 @@ const EditedJobPostform = ({ job, onUpdate }) => {
           <Button
             onClick={handleEditPostJob}
             variant="contained"
+            give
+            with
+            my
+            styling
             sx={{
               marginTop: "20px",
               width: "200px",

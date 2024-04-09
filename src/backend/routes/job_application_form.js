@@ -122,4 +122,45 @@ router.get("/api/applications/:jsID", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+router.get("/api/employerapplications/:employerID", async (req, res) => {
+  try {
+    const { employerID } = req.params;
+
+    // Query the database for applications associated with the given employer ID
+    const applications = await ApplicationForm.find({ employerID });
+
+    // Send the retrieved applications as a response
+    res.status(200).json({ applications });
+  } catch (error) {
+    console.error(
+      `Error fetching applications for employer ID ${employerID}:`,
+      error
+    );
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.delete("/api/applications/:id", async (req, res) => {
+  try {
+    // Extract the application ID from the request parameters
+    const { id } = req.params;
+
+    // Use Mongoose to find and delete the application by ID
+    const deletedApplication = await ApplicationForm.findByIdAndDelete(id);
+
+    if (!deletedApplication) {
+      // If no application is found with the given ID, return a 404 Not Found response
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    // If the application is successfully deleted, return a success response
+    res.status(200).json({ message: "Application deleted successfully" });
+  } catch (error) {
+    // If an error occurs, return a 500 Internal Server Error response
+    console.error("Error deleting application:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

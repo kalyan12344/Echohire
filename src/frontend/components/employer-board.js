@@ -53,6 +53,7 @@ const EmployerBoard = () => {
           },
         }
       );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(`Error fetching job seeker data for ID ${jsID}:`, error);
@@ -63,7 +64,7 @@ const EmployerBoard = () => {
   const getRecievedApplications = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/employerapplications/${loginCompanyData.companyName}`,
+        `http://localhost:5001/api/employerapplications/${loginCompanyData?._id}`,
 
         {
           headers: {
@@ -75,11 +76,14 @@ const EmployerBoard = () => {
       if (response.status === 200) {
         console.log("Applications fetched successfully:", response.data);
         const applications = response.data.applications;
+        console.log(applications);
         const mergedApplications = await Promise.all(
           applications.map(async (application) => {
-            const jobSeekerData = await fetchJobSeekerData(application.jsID);
-            const jsdetails = jobSeekerData.jsdetails[0];
-            return { ...application, jsdetails };
+            const jobSeekerData = await fetchJobSeekerData(application.jsId);
+            console.log(jobSeekerData);
+            const jsdetails = jobSeekerData;
+            console.log(jsdetails);
+            return { ...application, jsdetails: jsdetails[0] };
           })
         );
         // Process the merged applications data as needed
@@ -92,7 +96,7 @@ const EmployerBoard = () => {
       console.error("Error fetching applications:", error);
     }
   };
-
+  console.log(appJS);
   const getJobs = async () => {
     try {
       const response = await axios.get(

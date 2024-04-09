@@ -10,6 +10,7 @@ import {
   Box,
 } from "@mui/material";
 import "../styling/jobs.css";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Delete } from "@mui/icons-material";
@@ -26,6 +27,8 @@ const ITEMS_PER_PAGE = 4;
 
 const JobCardJS = ({ jobData, loginData, onJobApply }) => {
   const [open, setOpen] = useState(false);
+  const [savedJobs, setSavedJobs] = useState([]);
+
   const navigate = useNavigate();
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -46,9 +49,6 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
       </IconButton>
     </React.Fragment>
   );
-  const handleApply = async () => {
-    navigate(`/applicationform/${loginData._id}/${jobData._id}`);
-  };
 
   return (
     <Card
@@ -100,32 +100,48 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
           marginRight: "10px",
         }}
       >
-        <Button variant="contained" onClick={handleApply}>
+        {/* <Button variant="contained" onClick={handleApply}>
           Save
         </Button>
         <Button variant="contained" onClick={handleApply}>
           Apply
-        </Button>
+        </Button> */}
       </div>
     </Card>
   );
 };
 
-const SavedJobs = ({ jobs, loginData, onJobApply }) => {
-  const jobData = jobs;
-  console.log(jobs);
-  // const jobData = [...jobs];
-
-  console.log(jobData);
+const SavedJobs = ({ loginData }) => {
+  const [savedJobs, setSavedJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    fetchSavedJobs();
+  }, []);
+
+  const fetchSavedJobs = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/api/saved-jobs/${loginData._id}`
+      );
+
+      if (response.status === 200) {
+        setSavedJobs(response.data.savedJobs);
+      } else {
+        console.error("Failed to fetch saved jobs");
+      }
+    } catch (error) {
+      console.error("Error fetching saved jobs:", error);
+    }
+  };
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pageCount = Math.ceil(jobData?.length / ITEMS_PER_PAGE);
-  const paginatedData = jobData?.slice(offset, offset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(savedJobs.length / ITEMS_PER_PAGE);
+  const paginatedData = savedJobs.slice(offset, offset + ITEMS_PER_PAGE);
 
   return (
     <div className="rend-comp-parent">
@@ -139,19 +155,42 @@ const SavedJobs = ({ jobs, loginData, onJobApply }) => {
         className="render-comp"
       >
         <div>
-          <h2 style={{ color: "white" }}>Jobs Posted</h2>
+          <h2 style={{ color: "white" }}>Saved Jobs</h2>
         </div>
-        {jobData?.length !== 0 ? (
-          paginatedData?.map((job, index) => (
-            <JobCardJS
-              key={job.jobID}
-              jobData={job}
-              loginData={loginData}
-              onJobApply={onJobApply}
-            />
+        {savedJobs.length !== 0 ? (
+          paginatedData.map((job, index) => (
+            <Card
+              key={job._id}
+              className="job-card"
+              style={{
+                backgroundColor: "#202020cc",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <CardContent>
+                <Typography
+                  variant="h5"
+                  component="div"
+                  sx={{ color: "white" }}
+                >
+                  {job.title}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "white" }}>
+                  Location: {job.location}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "white" }}>
+                  Type: {job.type}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "white" }}>
+                  Deadline: {job.deadline}
+                </Typography>
+              </CardContent>
+            </Card>
           ))
         ) : (
-          <h3 style={{ color: "orange" }}>No jobs Posted Yet</h3>
+          <h3 style={{ color: "orange" }}>No saved jobs yet</h3>
         )}
         <Pagination
           count={pageCount}
@@ -160,10 +199,8 @@ const SavedJobs = ({ jobs, loginData, onJobApply }) => {
           sx={{
             "& .MuiPaginationItem-root": {
               color: "white",
-              // backgroundColor: "red",
             },
             "& .Mui-selected": {
-              // backgroundColor: "#202020cc",
               color: "red",
               fontSize: "20px",
             },

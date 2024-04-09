@@ -20,10 +20,13 @@ const jobApplicationRouter = require("./routes/job_application");
 const jobSeekerRouter = require("./routes/job_seeker");
 const jobRouter = require("./routes/jobs");
 const ApplicationFormRouter = require("./routes/job_application_form");
+const SavedJobRouter = require("./routes/saved-jobs");
+
 app.use(employerRouter);
 // app.use(jobApplicationRouter);
 app.use(jobSeekerRouter);
 app.use(jobRouter);
 app.use(ApplicationFormRouter);
+app.use(SavedJobRouter);
 
 module.exports = app;

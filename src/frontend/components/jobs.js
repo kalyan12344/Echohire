@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,13 +7,22 @@ import {
   Pagination,
   Drawer,
   Box,
+  TextField,
+  Slider,
+  Autocomplete,
 } from "@mui/material";
 import "../styling/jobs.css";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Delete } from "@mui/icons-material";
 import EditedJobPostform from "./post-edited-job";
 import axios from "axios";
-
+import { color } from "framer-motion";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { Navigate, useNavigate } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import { set } from "mongoose";
 const ITEMS_PER_PAGE = 4;
 
 const JobCard = ({ jobData, onDelete, onUpdate }) => {
@@ -110,11 +119,50 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
 
 const JobCardList = ({ username, jobs }) => {
   const companyName = username.username;
+  const jobTypes = ["contract", "full-Time", "part - time"];
+
   const [jobData, setJobData] = useState(jobs);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({
+    title: "",
+    location: "",
+    type: "",
+    minSalary: "",
+    maxSalary: "",
+    skills: [],
+  });
+  const [filteredJobs, setFilteredJobs] = useState(jobs);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+  };
+
+  const handleApplyFilters = () => {
+    // Filter the jobs based on the applied filters
+    const filtered = jobs.filter((job) => {
+      return (
+        job.title?.toLowerCase().includes(filters.title.toLowerCase()) &&
+        job.location?.toLowerCase().includes(filters.location.toLowerCase()) &&
+        job.type?.toLowerCase().includes(filters.type.toLowerCase()) &&
+        (filters.minSalary === "" ||
+          job.salary >= parseInt(filters.minSalary)) &&
+        (filters.maxSalary === "" ||
+          job.salary <= parseInt(filters.maxSalary)) &&
+        // Check if any skill in the filters.skills array is included in the job.skills array
+        (filters.skills.length === 0 ||
+          filters.skills.some((skill) => job.skills.includes(skill)))
+      );
+    });
+    // Update the filtered jobs state
+    setFilteredJobs(filtered);
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: name === "skills" ? value.split(",") : value, // Convert skills string to array
+    }));
   };
 
   const handleDeleteJob = (jobID) => {
@@ -174,7 +222,173 @@ const JobCardList = ({ username, jobs }) => {
     <div className="rend-comp-parent">
       <div className="left-panel">
         <div className="filter-panel">
-          <p>Filters</p>
+          <div className="filter-title">
+            <p>Filters</p>
+          </div>
+          <div className="filter-panel-filters">
+            <TextField
+              label="Title"
+              name="title"
+              value={filters.title}
+              variant="standard"
+              onChange={handleFilterChange}
+              sx={{
+                width: "200px",
+                "& .MuiInputLabel-root": { color: "white" },
+                "& .MuiInputBase-input": { color: "white" },
+                "& .MuiInput-underline:before": { borderBottomColor: "white" },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottomColor: "white",
+                },
+                "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                "& .MuiInputAdornment-root svg": { color: "white" },
+              }}
+            />
+            <TextField
+              label="Location"
+              name="location"
+              variant="standard"
+              value={filters.location}
+              onChange={handleFilterChange}
+              sx={{
+                width: "200px",
+                "& .MuiInputLabel-root": { color: "white" },
+                "& .MuiInputBase-input": { color: "white" },
+                "& .MuiInput-underline:before": { borderBottomColor: "white" },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottomColor: "white",
+                },
+                "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                "& .MuiInputAdornment-root svg": { color: "white" },
+              }}
+            />
+            <Autocomplete
+              id="company-type"
+              options={jobTypes}
+              value={filters.type}
+              onChange={(event, newValue) => {
+                setFilters({
+                  ...filters,
+                  type: newValue,
+                });
+              }}
+              sx={{
+                width: "200px",
+                "& .MuiInputLabel-root": { color: "white" },
+                "& .MuiInputBase-input": { color: "white" },
+                "& .MuiInput-underline:before": { borderBottomColor: "white" },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottomColor: "white",
+                },
+                "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                "& .MuiInputAdornment-root svg": { color: "white" },
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Job Type"
+                  variant="standard"
+                  sx={{
+                    width: "200px",
+                    "& .MuiInputLabel-root": { color: "white" },
+                    "& .MuiInputBase-input": { color: "white" },
+                    "& .MuiInput-underline:before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiInputAdornment-root svg": { color: "white" },
+                  }}
+                />
+              )}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "20px",
+                marginTop: "20px",
+              }}
+            >
+              <TextField
+                label="Min Salary"
+                name="minSalary"
+                variant="standard"
+                value={filters.minSalary}
+                onChange={handleFilterChange}
+                sx={{
+                  width: "90px",
+                  "& .MuiInputLabel-root": { color: "white" },
+                  "& .MuiInputBase-input": { color: "white" },
+                  "& .MuiInput-underline:before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                  "& .MuiInputAdornment-root svg": { color: "white" },
+                }}
+              />
+              <TextField
+                label="Max Salary"
+                name="maxSalary"
+                variant="standard"
+                value={filters.maxSalary}
+                onChange={handleFilterChange}
+                sx={{
+                  width: "90px",
+                  "& .MuiInputLabel-root": { color: "white" },
+                  "& .MuiInputBase-input": { color: "white" },
+                  "& .MuiInput-underline:before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                  "& .MuiInputAdornment-root svg": { color: "white" },
+                }}
+              />
+            </div>
+            <TextField
+              label="Skills"
+              name="skills"
+              variant="standard"
+              value={filters.skills.join(",")}
+              onChange={handleFilterChange}
+              sx={{
+                width: "200px",
+                "& .MuiInputLabel-root": { color: "white" },
+                "& .MuiInputBase-input": { color: "white" },
+                "& .MuiInput-underline:before": { borderBottomColor: "white" },
+                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                  borderBottomColor: "white",
+                },
+                "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                "& .MuiInputAdornment-root svg": { color: "white" },
+              }}
+            />
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              onClick={handleApplyFilters}
+              style={{
+                marginTop: "20px",
+                borderRadius: "20px",
+                height: "30px",
+                width: "130px",
+                padding: "0",
+              }}
+            >
+              Apply Filters
+            </Button>
+          </div>
         </div>
       </div>
       <div
@@ -184,8 +398,8 @@ const JobCardList = ({ username, jobs }) => {
         <div>
           <h2 style={{ color: "white" }}>Jobs Posted</h2>
         </div>
-        {jobData.length !== 0 ? (
-          paginatedData.map((job, index) => (
+        {filteredJobs.length !== 0 ? (
+          filteredJobs.map((job, index) => (
             <JobCard
               key={job.jobID}
               jobData={job}

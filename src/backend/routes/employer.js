@@ -1,4 +1,4 @@
-// *** NANDHU **
+
 const express = require("express");
 const Employer = require("../models/employer");
 const Js = require("../models/job_seeker");

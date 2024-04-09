@@ -7,13 +7,11 @@ const { useParams } = require("react-router-dom");
 router.get("/api/saved-jobs/:jsId", async (req, res) => {
   try {
     const { jsId } = req.params;
-    console.log(jsId, "jsId");
+    console.log(jsId,"jsId")
     // Fetch saved jobs and populate job details
-    const savedJobs = await SavedJob.find({ jsId: jsId })
-      .populate("jsId")
-      .populate("jobId"); // Populate job seeker details
+    const savedJobs = await SavedJob.find({jsId:jsId}) .populate('jsId').populate('jobId') // Populate job seeker details
     // Populate job details
-    console.log(savedJobs);
+console.log(savedJobs)
     res.status(200).json({ savedJobs });
   } catch (error) {
     console.error("Error fetching saved jobs:", error);

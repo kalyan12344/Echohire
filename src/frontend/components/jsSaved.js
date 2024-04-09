@@ -126,6 +126,7 @@ const SavedJobs = ({ loginData }) => {
       );
 
       if (response.status === 200) {
+        console.log(response)
         setSavedJobs(response.data.savedJobs);
       } else {
         console.error("Failed to fetch saved jobs");
@@ -178,13 +179,16 @@ const SavedJobs = ({ loginData }) => {
                   {job.title}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "white" }}>
-                  Location: {job.location}
+                  <b>Title: {job.jobId.title}</b>
                 </Typography>
                 <Typography variant="body2" sx={{ color: "white" }}>
-                  Type: {job.type}
+                  Location: {job.jobId.location}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "white" }}>
-                  Deadline: {job.deadline}
+                  Type: {job.jobId.type}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "white" }}>
+                  Deadline: {job.jobId.deadline}
                 </Typography>
               </CardContent>
             </Card>

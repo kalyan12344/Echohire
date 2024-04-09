@@ -4,10 +4,11 @@ const SavedJob = require("../models/saved-jobs"); // Import the SavedJob model
 const { useParams } = require("react-router-dom");
 
 // GET route to retrieve all saved jobs
-router.get("/api/saved-jobs/jsId", async (req, res) => {
+router.get("/api/saved-jobs/:jsId", async (req, res) => {
+  const jsId = useParams();
   try {
     // Fetch saved jobs and populate job details
-    const savedJobs = await SavedJob.find({})
+    const savedJobs = await SavedJob.find({ jsId: jsId })
       .populate("jsId") // Populate job seeker details
       .populate("jobId", "title location type deadline salary companyName"); // Populate job details
 

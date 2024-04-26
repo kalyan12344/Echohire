@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const CandidateList = ({ applicationData }) => {
   const [reload, setReload] = useState(false);
+  console.log(applicationData);
   console.log("applicationData", applicationData);
   const handleCardReject = (details) => {
     updateApplicationStatus(details._id, "Rejected");
@@ -48,11 +49,11 @@ const CandidateList = ({ applicationData }) => {
         return (
           <CandidateCard
             key={candidate._id}
-            name={`${candidate.jsdetails?.firstName} ${candidate.jsdetails?.lastName}`}
+            name={`${candidate?.firstname} ${candidate?.lastname}`}
             img={candidate.img}
-            email={candidate.jsdetails?.jsEmail}
+            email={candidate?.email}
             phone={candidate.phone}
-            role={candidate.title}
+            role={candidate?.jobId?.title}
             applicationDetails={candidate}
             onReject={handleCardReject}
             onFurthur={handleCardFurthur}

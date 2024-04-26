@@ -12,6 +12,7 @@ import {
   Slider,
   Autocomplete,
 } from "@mui/material";
+import Modal from "@mui/material/Modal";
 import "../styling/jobs.css";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -26,15 +27,68 @@ import Snackbar from "@mui/material/Snackbar";
 import { set } from "mongoose";
 
 const ITEMS_PER_PAGE = 4;
+const JobModal = ({ jobData, onClose }) => {
+  console.log(jobData);
+  return (
+    <Modal open={true} onClose={onClose} sx={{ margin: "50px" }}>
+      <Card
+        sx={{
+          backgroundColor: "#222222",
+          color: "white",
+          borderRadius: "10px",
+          boxShadow: "2px 2px 10px rgba(255,255,255,0.3)",
+        }}
+      >
+        <CardContent>
+          <Typography variant="h5" component="div">
+            {jobData.title}
+          </Typography>
+          <Typography variant="body2">Location: {jobData.location}</Typography>
+          <Typography variant="body2">Type: {jobData.type}</Typography>
+          {/* <Typography variant="body2">Deadline: {jobData.deadline}</Typography> */}
+          <Typography variant="body2">
+            Description: {jobData.description}
+          </Typography>
+          <Typography variant="body2">Salary: {jobData.salary}</Typography>
+          <Typography variant="body2">Skills: {jobData.skills}</Typography>
+          <Typography variant="body2">
+            Qualification: {jobData.qualifications}
+          </Typography>
 
+          <Button
+            variant="contained"
+            onClick={onClose}
+            sx={{
+              borderRadius: "30px",
+              marginTop: "30px",
+              backgroundColor: "rgba(255, 0, 0, 0.75)",
+              "&:hover": {
+                backgroundColor: "rgba(255, 0, 0, 1)",
+              },
+            }}
+          >
+            Close
+          </Button>
+        </CardContent>
+      </Card>
+    </Modal>
+  );
+};
 const JobCardJS = ({ jobData, loginData, onJobApply }) => {
   const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
+    setModalOpen(false);
     setOpen(false);
+  };
+
+  const handleOpen = () => {
+    console.log(modalOpen);
+    setModalOpen(true);
   };
 
   const action = (
@@ -63,79 +117,87 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
         jsId,
         jobData,
       });
-
-      // Check if the request was successful
+      console.log(response.status);
       if (response.status === 201) {
         console.log("Job saved successfully");
         return true; // Return true to indicate success
+      }
+      if (response.status === 201) {
+        console.log("Job saved successfully");
       } else {
-        console.error("Failed to save job");
-        return false; // Return false to indicate failure
+        setOpen(true); // Display alert for any other response status
       }
     } catch (error) {
-      console.error("Error saving job:", error);
+      if (error.response.status === 400) {
+        setOpen(true);
+      }
+      console.error("Error saving job:", error.response.status);
       return false; // Return false to indicate failure
     }
   };
 
   return (
-    <Card
-      className="job-card "
-      style={{
-        backgroundColor: "#202020cc",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-      }}
-    >
-      <div>
-        <CardContent>
-          <Typography variant="h5" component="div" sx={{ color: "white" }}>
-            {jobData.title}
-          </Typography>
-
-          <Typography variant="body2" sx={{ color: "white" }}>
-            Location: {jobData.location}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "white" }}>
-            Type: {jobData.type}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "white" }}>
-            Deadline: {jobData.deadline}
-          </Typography>
-        </CardContent>
-      </div>
-      <div>
-        {" "}
-        <Snackbar
-          open={open}
-          sx={{ width: "30px" }}
-          autoHideDuration={2000}
-          severity="success"
-          onClose={handleClose}
-          message="You have already for this job"
-          action={action}
-        />
-      </div>
-
-      <div
+    <div>
+      <Card
+        onClick={handleOpen}
+        className="job-card "
         style={{
+          backgroundColor: "#202020cc",
           display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          gap: "30px",
-          justifyContent: "space-around",
-          marginRight: "10px",
+          flexDirection: "row",
+          justifyContent: "space-between",
         }}
       >
-        <Button variant="contained" onClick={handleSave}>
-          Save
-        </Button>
-        <Button variant="contained" onClick={handleApply}>
-          Apply
-        </Button>
-      </div>
-    </Card>
+        <div>
+          <CardContent>
+            <Typography variant="h5" component="div" sx={{ color: "white" }}>
+              {jobData.title}
+            </Typography>
+
+            <Typography variant="body2" sx={{ color: "white" }}>
+              Location: {jobData.location}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "white" }}>
+              Type: {jobData.type}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "white" }}>
+              Deadline: {jobData.deadline}
+            </Typography>
+          </CardContent>
+        </div>
+        <div>
+          {" "}
+          <Snackbar
+            open={open}
+            sx={{ width: "30px" }}
+            autoHideDuration={2000}
+            severity="success"
+            onClose={handleClose}
+            message="You have already saved this job"
+            action={action}
+          />
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            gap: "30px",
+            justifyContent: "space-around",
+            marginRight: "10px",
+          }}
+        >
+          <Button variant="contained" onClick={handleSave}>
+            Save
+          </Button>
+          <Button variant="contained" onClick={handleApply}>
+            Apply
+          </Button>
+        </div>
+      </Card>
+      {modalOpen && <JobModal jobData={jobData} onClose={handleClose} />}
+    </div>
   );
 };
 
@@ -389,6 +451,15 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
           page={currentPage}
           onChange={handlePageChange}
           style={{ marginTop: "20px" }}
+          sx={{
+            "& .MuiPaginationItem-root": {
+              color: "white",
+            },
+            "& .Mui-selected": {
+              color: "red",
+              fontSize: "20px",
+            },
+          }}
         />
       </div>
     </div>

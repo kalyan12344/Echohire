@@ -1,6 +1,6 @@
 // kalyan
 import React, { useState, useEffect } from "react";
-import { Button } from "@mui/material";
+import { Button, Card, TextField } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Modal from "@mui/material/Modal";
@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { useLocation } from "react-router-dom";
+import { TextArea } from "@buildo/bento-design-system";
 
 const EmployerBoard = () => {
   const location = useLocation();
@@ -38,11 +39,23 @@ const EmployerBoard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [jobData, setJobData] = useState([]);
   const [appJS, setAppJS] = useState([]);
+  const [issue, setIssue] = useState({
+    subject: "",
+    issueDesc: "",
+  });
+
+  const [issueBoxOpen, setIssueBoxOpen] = useState(false);
+
   useEffect(() => {
     getJobs();
     getRecievedApplications();
   }, []);
-
+  const closeIssueBox = () => {
+    setIssueBoxOpen(false);
+  };
+  const openIssueBox = () => {
+    setIssueBoxOpen(true);
+  };
   const fetchJobSeekerData = async (jsID) => {
     try {
       const response = await axios.get(
@@ -62,9 +75,10 @@ const EmployerBoard = () => {
   };
 
   const getRecievedApplications = async () => {
+    console.log(loginCompanyData?.companyName);
     try {
       const response = await axios.get(
-        `http://localhost:5001/api/employerapplications/${loginCompanyData?._id}`,
+        `http://localhost:5001/company/${loginCompanyData?.companyName}/jobforms`,
 
         {
           headers: {
@@ -72,13 +86,13 @@ const EmployerBoard = () => {
           },
         }
       );
-
+      console.log(response.data);
       if (response.status === 200) {
         console.log("Applications fetched successfully:", response.data);
-        const applications = response.data.applications;
+        const applications = response.data;
         console.log(applications);
         const mergedApplications = await Promise.all(
-          applications.map(async (application) => {
+          applications?.map(async (application) => {
             const jobSeekerData = await fetchJobSeekerData(application.jsId);
             console.log(jobSeekerData);
             const jsdetails = jobSeekerData;
@@ -140,6 +154,29 @@ const EmployerBoard = () => {
     console.log(newValue);
   };
 
+  const raiseAnIssue = async () => {
+    setIssueBoxOpen(false);
+    const subject = issue.subject;
+    const message = issue.issueDesc;
+    console.log(issue);
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/api/send-email",
+        {
+          subject,
+          message,
+        }
+      );
+
+      console.log("Email sent successfully:", response.data);
+      // Handle success (e.g., display a success message to the user)
+    } catch (error) {
+      console.error("Error submitting contact form:", error.message);
+      // Handle error (e.g., display an error message to the user)
+    }
+    setIssue({ subject: "", issueDesc: "" });
+  };
+
   const renderComponent = () => {
     switch (value) {
       case 0:
@@ -147,6 +184,7 @@ const EmployerBoard = () => {
           <EmployerDashboard
             username={loginCompanyData.companyName}
             jobs={jobData}
+            recievedApplications={appJS}
           />
         );
       case 1:
@@ -160,7 +198,7 @@ const EmployerBoard = () => {
           </div>
         );
       case 3:
-        return <EmployerProfile />;
+        return <EmployerProfile employerDetails={loginCompanyData} />;
       default:
         return null;
     }
@@ -234,6 +272,7 @@ const EmployerBoard = () => {
               label="Profile"
             />
           </Tabs>
+          <Tab></Tab>
         </div>
         <div>
           <Button
@@ -268,8 +307,93 @@ const EmployerBoard = () => {
             </Box>
           </Drawer>
         </div>
+        <div>
+          <Button
+            onClick={openIssueBox}
+            variant="contained"
+            sx={{
+              borderRadius: "30px",
+              backgroundColor: "rgba(255, 0, 0, 0.75)",
+              "&:hover": {
+                backgroundColor: "rgba(255, 0, 0, 1)",
+              },
+            }}
+            style={{
+              color: "white",
+            }}
+          >
+            RAISE AN ISSUE
+          </Button>
+        </div>
       </div>
-
+      {setIssueBoxOpen && (
+        <Modal
+          open={issueBoxOpen}
+          onClose={closeIssueBox}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Card
+            sx={{
+              width: "500px",
+              height: "300px",
+              padding: "30px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              // backgroundColor: "#202020cc",
+              // color: "white",
+            }}
+          >
+            <h2>Raise an Issue</h2>
+            <TextField
+              value={issue.subject}
+              onChange={(event) => {
+                setIssue((prev) => ({
+                  ...prev,
+                  subject: event.target.value,
+                }));
+              }}
+              placeholder="Issue Subject"
+              sx={{
+                marginBottom: "10px",
+                width: "500px",
+                color: "white",
+              }}
+            />{" "}
+            <TextField
+              multiline
+              rows={4}
+              value={issue.issueDesc}
+              onChange={(event) => {
+                setIssue((prev) => ({
+                  ...prev,
+                  issueDesc: event.target.value,
+                }));
+              }}
+              placeholder="Issue description"
+              sx={{ marginBottom: "10px", width: "500px", color: "white" }}
+            />{" "}
+            <Button
+              onClick={raiseAnIssue}
+              variant="contained"
+              type="submit"
+              sx={{
+                backgroundColor: "rgba(0,0,0,0.75)",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 1)",
+                },
+              }}
+            >
+              Submit
+            </Button>
+          </Card>
+        </Modal>
+      )}
       <div>{renderComponent()}</div>
     </div>
   );

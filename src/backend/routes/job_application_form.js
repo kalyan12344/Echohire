@@ -134,16 +134,16 @@ router.get("/api/employerapplications/:employerID", async (req, res) => {
           from: "Job", // Replace with your Job collection name
           localField: "jobId",
           foreignField: "_id",
-          as: "jobDetails"
-        }
+          as: "jobDetails",
+        },
       },
       {
         $match: {
-          "jobDetails.companyName": employerID
-        }
-      }
+          "jobDetails.companyName": employerID,
+        },
+      },
     ]);
-    console.log(applications)
+    console.log(applications);
   } catch (error) {
     console.error(
       `Error fetching applications for employer ID ${employerID}:`,
@@ -172,6 +172,54 @@ router.delete("/api/applications/:id", async (req, res) => {
     // If an error occurs, return a 500 Internal Server Error response
     console.error("Error deleting application:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get("/company/:companyId/jobforms", async (req, res) => {
+  try {
+    const companyId = req.params.companyId;
+    console.log("companyId for forms:", companyId);
+    // Find all jobs of the company
+    const jobs = await Job.find({ companyName: companyId });
+
+    // Extract job IDs
+    const jobIds = jobs.map((job) => job._id);
+    console.log(jobIds);
+    // Find all application forms associated with those job IDs
+    const jobForms = await ApplicationForm.find({
+      jobId: { $in: jobIds },
+    }).populate("jobId");
+    console.log(jobForms);
+    res.json(jobForms);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+router.put("/api/updateapplication/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Find the application by id and update its status
+    const updatedApplication = await ApplicationForm.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+    console.log(updatedApplication);
+
+    if (!updatedApplication) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Application status updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

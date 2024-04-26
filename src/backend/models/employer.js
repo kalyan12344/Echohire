@@ -1,17 +1,21 @@
-// Define your MongoDB schema and models here
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const employerSchema = new mongoose.Schema({
-    companyName: String,
-    companyType: String,
-    companyDescription: String,
-    companyEmail: {
-      type:String,
-      required:true
+  companyName: {
+    type: String,
+    unique: true,
+    required: true,
   },
-    companyPassword: String,
-    companyLogo: String,
-  });
-  
-  const Employer = mongoose.model("Employer", employerSchema);
-  module.exports = Employer;
+  companyType: String,
+  companyDescription: String,
+  companyEmail: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  companyPassword: String,
+  companyLogo: String,
+});
+
+const Employer = mongoose.model("Employer", employerSchema);
+module.exports = Employer;

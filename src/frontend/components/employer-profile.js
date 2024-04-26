@@ -2,7 +2,9 @@ import React from "react";
 import "../styling/employer-profile.css";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
-const EmployerProfile = () => {
+const EmployerProfile = (employerDetails) => {
+  console.log(employerDetails.employerDetails);
+  const employerInfo = employerDetails.employerDetails;
   return (
     <div className="total-profile">
       <div className="logo-title">
@@ -13,8 +15,8 @@ const EmployerProfile = () => {
           />{" "}
         </div>
         <div>
-          <h3 className="company-title">Twitter</h3>
-          <p className="comp-type">A Manufacturing Company</p>
+          <h3 className="company-title">{employerInfo.companyName}</h3>
+          <p className="comp-type">A {employerInfo.companyType} Company</p>
         </div>
 
         <div className="comp-size">
@@ -27,30 +29,7 @@ const EmployerProfile = () => {
         </div>
       </div>
       <div className="company-desc">
-        <p>
-          Twitter, Inc. was an American social media company based in San
-          Francisco, California. The company operated the social networking
-          service Twitter and previously the Vine short video app and Periscope
-          livestreaming service. In April 2023, Twitter merged with X
-          Holdings[6] and ceased to be an independent company, becoming a part
-          of X Corp.[7] Twitter was created by Jack Dorsey, Noah Glass, Biz
-          Stone, and Evan Williams in March 2006 and was launched that July. By
-          2012, more than 100 million users tweeted 340 million tweets a
-          day.[8][9] The company went public in November 2013. By 2019, Twitter
-          had more than 330 million monthly active users.[10] On April 25, 2022,
-          Twitter agreed to a $44 billion buyout by Elon Musk, CEO of SpaceX and
-          Tesla, one of the biggest deals to turn a company private.[11][12] On
-          July 8, Musk terminated the deal.[13] Twitter's shares fell,[14]
-          leading company officials to sue Musk in the Chancery Court of
-          Delaware on July 12.[15] On October 4, Musk announced his intention to
-          purchase the company as he had agreed, for $44 billion, or $54.20 a
-          share;[16] the agreement closed on October 27. Following Musk's
-          takeover, Twitter was criticized for an increase in hate speech,[17]
-          as well as for perceived systemic prioritization of right-wing
-          content.[18][19][20][21] His acquisition of the company has been
-          characterized by large-scale policy changes, mass layoffs and
-          resignations, and a dramatic shift in the company's work culture.
-        </p>
+        <p>{employerInfo.companyDescription}</p>
       </div>
     </div>
   );

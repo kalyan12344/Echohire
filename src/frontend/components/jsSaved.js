@@ -111,30 +111,8 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
   );
 };
 
-const SavedJobs = ({ loginData }) => {
-  const [savedJobs, setSavedJobs] = useState([]);
+const SavedJobs = ({ savedJobs }) => {
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    fetchSavedJobs();
-  }, []);
-
-  const fetchSavedJobs = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5001/api/saved-jobs/${loginData._id}`
-      );
-
-      if (response.status === 200) {
-        console.log(response)
-        setSavedJobs(response.data.savedJobs);
-      } else {
-        console.error("Failed to fetch saved jobs");
-      }
-    } catch (error) {
-      console.error("Error fetching saved jobs:", error);
-    }
-  };
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -147,9 +125,9 @@ const SavedJobs = ({ loginData }) => {
   return (
     <div className="rend-comp-parent">
       <div className="left-panel">
-        <div className="filter-panel">
-          <p>Filters</p>
-        </div>
+        {/* <div className="filter-panel"> */}
+        {/* <p>Filters</p> */}
+        {/* </div> */}
       </div>
       <div
         style={{ display: "flex", flexDirection: "column", gap: "10px" }}

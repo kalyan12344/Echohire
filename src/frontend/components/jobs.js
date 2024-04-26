@@ -12,6 +12,8 @@ import {
   Autocomplete,
 } from "@mui/material";
 import "../styling/jobs.css";
+import Modal from "@mui/material/Modal";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Delete } from "@mui/icons-material";
@@ -24,12 +26,66 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Snackbar from "@mui/material/Snackbar";
 import { set } from "mongoose";
 const ITEMS_PER_PAGE = 4;
+const JobModal = ({ jobData, onClose }) => {
+  return (
+    <Modal open={true} onClose={onClose} sx={{ margin: "50px" }}>
+      <Card
+        sx={{
+          backgroundColor: "#222222",
+          color: "white",
+          borderRadius: "10px",
+          boxShadow: "2px 2px 10px rgba(255,255,255,0.3)",
+        }}
+      >
+        <CardContent>
+          <Typography variant="h5" component="div">
+            {jobData.title}
+          </Typography>
+          <Typography variant="body2">Location: {jobData.location}</Typography>
+          <Typography variant="body2">Type: {jobData.type}</Typography>
+          {/* <Typography variant="body2">Deadline: {jobData.deadline}</Typography> */}
+          <Typography variant="body2">
+            Description: {jobData.description}
+          </Typography>
+          <Typography variant="body2">Salary: {jobData.salary}</Typography>
+          <Typography variant="body2">Skills: {jobData.skills}</Typography>
+          <Typography variant="body2">
+            Qualification: {jobData.qualifications}
+          </Typography>
 
+          <Button
+            variant="contained"
+            onClick={onClose}
+            sx={{
+              borderRadius: "30px",
+              marginTop: "30px",
+              backgroundColor: "rgba(255, 0, 0, 0.75)",
+              "&:hover": {
+                backgroundColor: "rgba(255, 0, 0, 1)",
+              },
+            }}
+          >
+            Close
+          </Button>
+        </CardContent>
+      </Card>
+    </Modal>
+  );
+};
 const JobCard = ({ jobData, onDelete, onUpdate }) => {
   console.log(jobData);
+  const [modalOpen, setModalOpen] = useState(false);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editedJobData, setEditedJobData] = useState({ ...jobData });
+  const handleClose = (event, reason) => {
+    setModalOpen(false);
+  };
 
+  const handleOpen = () => {
+    console.log(modalOpen);
+    setModalOpen(true);
+  };
   const openDrawer = () => {
     setDrawerOpen(true);
   };
@@ -56,64 +112,68 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
   console.log(editedJobData);
 
   return (
-    <Card
-      className="job-card"
-      style={{
-        backgroundColor: "#202020cc",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-      }}
-    >
-      <div>
-        <CardContent>
-          <Typography variant="h5" component="div" sx={{ color: "white" }}>
-            {jobData.title}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "white" }}>
-            Location: {jobData.location}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "white" }}>
-            Type: {jobData.type}
-          </Typography>
-          <Typography variant="body2" sx={{ color: "white" }}>
-            Deadline: {jobData.deadline}
-          </Typography>
-        </CardContent>
-      </div>
-
-      <div
+    <div>
+      <Card
+        onClick={handleOpen}
+        className="job-card"
         style={{
-          marginTop: "15px",
+          backgroundColor: "#202020cc",
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           justifyContent: "space-between",
         }}
       >
-        <div className="edit-icon">
-          <EditIcon sx={{ color: "orange" }} onClick={openDrawer} />
+        <div>
+          <CardContent>
+            <Typography variant="h5" component="div" sx={{ color: "white" }}>
+              {jobData.title}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "white" }}>
+              Location: {jobData.location}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "white" }}>
+              Type: {jobData.type}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "white" }}>
+              Deadline: {jobData.deadline}
+            </Typography>
+          </CardContent>
         </div>
-        <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
-          <Box
-            sx={{
-              width: 600,
-              padding: "20px",
-              height: 1000,
-              backgroundColor: "#1a1819",
-            }}
-          >
-            <EditedJobPostform
-              job={editedJobData}
-              onUpdate={handleUpdateJobs}
-              onChange={handleEditJobDataChange}
-            />
-          </Box>
-        </Drawer>
-        <div className="delete-icon">
-          <DeleteIcon sx={{ color: "#ff2600d2" }} onClick={handleDeleteJob} />
+
+        <div
+          style={{
+            marginTop: "15px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div className="edit-icon">
+            <EditIcon sx={{ color: "orange" }} onClick={openDrawer} />
+          </div>
+          <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
+            <Box
+              sx={{
+                width: 600,
+                padding: "20px",
+                height: 1000,
+                backgroundColor: "#1a1819",
+              }}
+            >
+              <EditedJobPostform
+                job={editedJobData}
+                onUpdate={handleUpdateJobs}
+                onChange={handleEditJobDataChange}
+              />
+            </Box>
+          </Drawer>
+          <div className="delete-icon">
+            <DeleteIcon sx={{ color: "#ff2600d2" }} onClick={handleDeleteJob} />
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+      {modalOpen && <JobModal jobData={jobData} onClose={handleClose} />}
+    </div>
   );
 };
 

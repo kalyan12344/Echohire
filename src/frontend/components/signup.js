@@ -38,12 +38,33 @@ const EmployerSignupForm = () => {
 
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordSame, setIsPasswordSame] = useState(true);
-
-  const validateEmail = () => {
-    // Regular expression for basic email validation
+  const handleEmployerEmailDomainCheck = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(employerDetails.companyEmail);
     setIsValidEmail(isValid);
+    const domain = employerDetails?.companyEmail?.match(/@(.+)/)[1];
+    console.log(domain);
+
+    if (domain && isValid) {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/verify-domain`,
+          {
+            params: {
+              domain: domain,
+            },
+          }
+        );
+        console.log(response.data.success); // Log the domain information to the console
+        // Handle the domain verification response as needed
+      } catch (error) {
+        console.error("Error verifying domain:", error);
+        // Handle error if API call fails
+      }
+    }
+  };
+  const validateEmail = () => {
+    // Regular expression for basic email validation
   };
   const handleLogoChange = (event) => {
     console.log(event);
@@ -201,6 +222,7 @@ const EmployerSignupForm = () => {
           id="standard-basic"
           label="Email"
           variant="standard"
+          onBlur={handleEmployerEmailDomainCheck}
           sx={{
             width: "200px",
             marginRight: "20px",
@@ -213,7 +235,7 @@ const EmployerSignupForm = () => {
             "& .MuiInput-underline:after": { borderBottomColor: "white" },
           }}
           value={employerDetails.companyEmail}
-          onBlur={validateEmail}
+          // onBlur={validateEmail}
           error={!isValidEmail}
           helperText={!isValidEmail ? "Invalid email address" : ""}
           onChange={(e) => {

@@ -26,9 +26,10 @@ router.put("/api/saved-jobs", async (req, res) => {
     console.log(jsId, jobData);
     let jobId = jobData._id;
     // Check if the job already exists for the user
-    const existingSavedJob = await SavedJob.findOne({ jsId, jobData });
-
+    const existingSavedJob = await SavedJob.findOne({ jsId, jobId });
+    console.log(existingSavedJob);
     if (existingSavedJob) {
+      console.log("job already saved");
       return res.status(400).json({ message: "Job already saved" });
     }
 

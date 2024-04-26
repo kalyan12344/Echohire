@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 
 const app = express();
 require("./database");
@@ -21,6 +22,8 @@ const jobSeekerRouter = require("./routes/job_seeker");
 const jobRouter = require("./routes/jobs");
 const ApplicationFormRouter = require("./routes/job_application_form");
 const SavedJobRouter = require("./routes/saved-jobs");
+const EmailRouter = require("./routes/email");
+const WhoisRouter = require("./routes/whois");
 
 app.use(employerRouter);
 // app.use(jobApplicationRouter);
@@ -28,5 +31,7 @@ app.use(jobSeekerRouter);
 app.use(jobRouter);
 app.use(ApplicationFormRouter);
 app.use(SavedJobRouter);
+app.use(EmailRouter);
+app.use(WhoisRouter);
 
 module.exports = app;

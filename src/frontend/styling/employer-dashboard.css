@@ -43,8 +43,8 @@
   width: inherit;
 } */
 .grid1 {
-  grid-column: 1/5;
-  /* grid-row: ; */
+  grid-column: 1/7;
+  /* grid-row: 1/5; */
 }
 .grid2 {
   grid-column: 5/7;
@@ -99,4 +99,24 @@
   font-size: 3em;
   transform: translateY(30px);
   padding: 0;
+}
+.inner-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.inner-box > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.inner-box > div > p {
+  font-size: 1.2em;
+}
+
+.inner-box > div > div {
+  font-size: 3em;
 }

@@ -60,15 +60,17 @@ const CandidateCard = ({
       </CardContent>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {console.log(status)}
-        (
+
         <Chip
-          label={status == "Rejected" || "Success" ? "Rejected" : "Reject"}
+          label={
+            status == "Rejected" || status == "Success" ? "Rejected" : "Reject"
+          }
           color="error"
           // disabled={status == "Rejected" || "Success" ? true : false}
           className="chip"
           onClick={handleReject}
         />
-        )
+
         {status === "Applied" || status === "InConsideration" ? (
           <Chip
             label="Move Furthur"

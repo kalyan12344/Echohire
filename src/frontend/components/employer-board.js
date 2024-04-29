@@ -10,7 +10,6 @@ import WorkIcon from "@mui/icons-material/Work";
 import PeopleIcon from "@mui/icons-material/People";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import "../styling/employer-board.css";
-import { colorTransformations } from "@mui/material/Link/getTextDecoration";
 import JobPostform from "./job-post";
 import JobCardList from "./jobs";
 import { Drawer } from "@mui/material";
@@ -182,7 +181,7 @@ const EmployerBoard = () => {
       case 0:
         return (
           <EmployerDashboard
-            username={loginCompanyData.companyName}
+            loginCompanyData={loginCompanyData}
             jobs={jobData}
             recievedApplications={appJS}
           />
@@ -194,7 +193,10 @@ const EmployerBoard = () => {
       case 2:
         return (
           <div>
-            <CandidateList applicationData={appJS} />
+            <CandidateList
+              applicationData={appJS}
+              loginCompanyData={loginCompanyData}
+            />
           </div>
         );
       case 3:

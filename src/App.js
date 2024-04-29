@@ -7,13 +7,16 @@ import JsBoard from "./frontend/components/jsBoard";
 import JobApplicationForm from "./frontend/components/job-application";
 import TickMarkAndRedirect from "./frontend/components/tickandredirect";
 import ApplicationFormPage from "./frontend/components/Job-Application-Process/ApplicationForm_retirval";
+import LandingPage from "./frontend/components/landing_page";
 // import { MantineProvider } from "@mantine/core";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<Login />} />
+        <Route exact path="/" element={<LandingPage />} />
+
+        <Route exact path="/Login" element={<Login />} />
         <Route exact path="/Signup" element={<SignupPage />} />
         <Route exact path="/employerboard" element={<EmployerBoard />} />
         <Route exact path="/jsboard" element={<JsBoard />} />

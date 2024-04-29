@@ -61,6 +61,26 @@ router.post("/api/login", async (req, res) => {
   }
 });
 
+router.get("/api/employer/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find employer by ID in the database
+    const employer = await Employer.findById(id);
+
+    if (!employer) {
+      return res.status(404).json({ error: "Employer not found" });
+    }
+
+    // If employer found, return it in the response
+    res.json(employer);
+  } catch (error) {
+    // Handle errors
+    console.error("Error fetching employer details:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // API Endpoint for Employer Signup - ***** HARSHIT ******
 router.post("/api/employers/signup", async (req, res) => {
   try {
@@ -103,6 +123,30 @@ router.post("/api/employers/login", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.put("/api/employers/:id", async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const updatedEmployer = await Employer.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Run model validation before updating
+    });
+
+    if (!updatedEmployer) {
+      return res.status(404).json({ message: "Employer not found" });
+    }
+
+    res.json({
+      message: "Employer details updated successfully",
+      updatedEmployer,
+    });
+  } catch (error) {
+    console.error("Error updating employer details:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 module.exports = router;

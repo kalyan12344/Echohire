@@ -8,11 +8,14 @@ import {
   Drawer,
   Box,
   Chip,
+  TextField,
+  Modal,
 } from "@mui/material";
 import axios from "axios";
 import "../styling/jobs.css";
 import { color } from "framer-motion";
 import FolderDeleteIcon from "@mui/icons-material/FolderDelete";
+import { ShareSharp } from "@mui/icons-material";
 
 const ITEMS_PER_PAGE = 4;
 const JobCard = ({ jobData, onWithdrawApplication }) => {
@@ -23,6 +26,56 @@ const JobCard = ({ jobData, onWithdrawApplication }) => {
     Rejected: "red",
   };
 
+  const [open, setOpen] = useState(false);
+  const [companyName, setCompanyName] = useState("");
+  const [interviewExperience, setInterviewExperience] = useState("");
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = () => {
+    // Do something with companyName and interviewExperience data
+    console.log("Company Name:", companyName);
+    console.log("Interview Experience:", interviewExperience);
+    // Reset the fields after submission if needed
+    setCompanyName("");
+    setInterviewExperience("");
+    handleClose();
+  };
+
+  const body = (
+    <Box sx={{ width: 500, bgcolor: "background.paper", p: 2 }}>
+      <h2>Interview Experience</h2>
+      <TextField
+        label="Company Name"
+        variant="outlined"
+        value={companyName}
+        onChange={(e) => setCompanyName(e.target.value)}
+        fullWidth
+        sx={{ mb: 1 }}
+      />
+      <TextField
+        label="Interview Experience"
+        variant="outlined"
+        value={interviewExperience}
+        onChange={(e) => setInterviewExperience(e.target.value)}
+        fullWidth
+        multiline
+        rows={4}
+        sx={{ mb: 2 }}
+      />
+      <Button variant="contained" onClick={handleSubmit}>
+        Submit
+      </Button>
+    </Box>
+  );
+
+  console.log(jobData);
   const handleWithdrawClick = () => {
     onWithdrawApplication(jobData._id);
   };
@@ -70,9 +123,35 @@ const JobCard = ({ jobData, onWithdrawApplication }) => {
               backgroundColor: statusColor[jobData.status],
             }}
           />
-          <Button onClick={handleWithdrawClick}>
-            <FolderDeleteIcon sx={{ color: "red" }} />
-          </Button>
+          {jobData.status !== "Success" ? (
+            <Button onClick={handleWithdrawClick}>
+              <FolderDeleteIcon sx={{ color: "red" }} />
+            </Button>
+          ) : (
+            <div>
+              <Button
+                sx={{ fontSize: "10px", color: "green" }}
+                onClick={handleOpen}
+              >
+                Interview Experience
+              </Button>
+              <Modal
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-interview-title"
+                aria-describedby="modal-interview-description"
+              >
+                {body}
+              </Modal>
+            </div>
+          )}
         </div>
       </div>
     </Card>
@@ -128,9 +207,7 @@ const MyApplications = ({ applications }) => {
   return (
     <div className="rend-comp-parent">
       <div className="left-panel">
-        <div className="filter-panel">
-          <p>Filters</p>
-        </div>
+        <div className=""></div>
       </div>
       <div
         style={{ display: "flex", flexDirection: "column", gap: "10px" }}

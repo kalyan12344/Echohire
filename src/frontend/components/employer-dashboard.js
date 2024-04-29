@@ -1,12 +1,18 @@
 import "../styling/employer-dashboard.css";
-const EmployerDashboard = ({ username, jobs, recievedApplications }) => {
+import axios from "axios";
+import { useEffect, useState } from "react";
+const EmployerDashboard = ({ loginCompanyData, jobs }) => {
   let hired = 0;
+  let username = loginCompanyData.companyName;
   let inConsideration = 0;
   let applied = 0;
   let interviewScheduled = 0;
   let rejected = 0;
   console.log(jobs);
-  console.log(recievedApplications);
+  const [recievedApplications, setApplications] = useState([]);
+  useEffect(() => {
+    getRecievedApplications();
+  }, []);
   recievedApplications.forEach((application) => {
     if (application.status === "Rejected") {
       rejected = rejected + 1;
@@ -14,12 +20,41 @@ const EmployerDashboard = ({ username, jobs, recievedApplications }) => {
       inConsideration = inConsideration + 1;
     } else if (application.status === "Applied") {
       applied = applied + 1;
-    } else if (application.status === "Hired") {
+    } else if (application.status === "Success") {
       hired = hired + 1;
     } else if (application.status === "Interview") {
       interviewScheduled = interviewScheduled + 1;
     }
   });
+
+  const getRecievedApplications = async () => {
+    console.log(loginCompanyData?.companyName);
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/company/${loginCompanyData?.companyName}/jobforms`,
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.status === 200) {
+        console.log("Applications fetched successfully:", response.data);
+        const applications = response.data;
+        console.log(applications);
+
+        // Process the merged applications data as needed
+        setApplications(applications);
+        console.log(applications);
+      } else {
+        console.error("Failed to fetch applications");
+      }
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+  };
 
   console.log(hired, inConsideration, applied, interviewScheduled, rejected);
   const totalJobs = jobs?.length;
@@ -64,11 +99,14 @@ const EmployerDashboard = ({ username, jobs, recievedApplications }) => {
           </div>
         </div>
         <div class="grid4">
-          <div className="innner-box">4</div>
+          <div className="innner-box">
+            <p>Total Active Applications</p>
+            <div>{inConsideration + applied + interviewScheduled}</div>
+          </div>
         </div>
         <div class="grid5">
           <div className="innner-box">
-            <p>Total Jobs</p>
+            <p>Total Jobs Posted</p>
             <div>{totalJobs}</div>
           </div>
         </div>

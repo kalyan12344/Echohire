@@ -7,7 +7,8 @@ import axios from "axios";
 
 const JsProfile = ({ loginData, username }) => {
   const [skills, setSkills] = useState([...loginData.skills]);
-  const [workExp, setWorkExp] = useState([loginData.employment_history]);
+  const [workExp, setWorkExp] = useState([loginData.employement_history]);
+
   const [education, setEducation] = useState([loginData.education]);
 
   const [newSkill, setNewSkill] = useState("");

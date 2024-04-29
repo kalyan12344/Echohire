@@ -63,9 +63,13 @@ const CandidateCard = ({
 
         <Chip
           label={
-            status == "Rejected" || status == "Success" ? "Rejected" : "Reject"
+            status == "Rejected"
+              ? "Rejected"
+              : status == "Success"
+              ? "Success"
+              : "Reject"
           }
-          color="error"
+          color={status == "Success" ? "success" : "error"}
           // disabled={status == "Rejected" || "Success" ? true : false}
           className="chip"
           onClick={handleReject}
@@ -121,7 +125,23 @@ const CandidateCard = ({
           />{" "}
         </div>
       ) : (
-        ""
+        <div
+          style={{
+            width: "100%",
+            height: "50px",
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Chip
+            label={status}
+            className="chip"
+            // color="primary"
+            sx={{ backgroundColor: "grey" }}
+          />
+        </div>
       )}
     </Card>
   );

@@ -12,6 +12,8 @@ import {
   Slider,
   Autocomplete,
 } from "@mui/material";
+import Switch from "@mui/material/Switch";
+
 import Modal from "@mui/material/Modal";
 import "../styling/jobs.css";
 import EditIcon from "@mui/icons-material/Edit";
@@ -28,7 +30,6 @@ import { set } from "mongoose";
 
 const ITEMS_PER_PAGE = 4;
 const JobModal = ({ jobData, onClose }) => {
-  console.log(jobData);
   return (
     <Modal open={true} onClose={onClose} sx={{ margin: "50px" }}>
       <Card
@@ -202,7 +203,9 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
 };
 
 const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
-  const [value, setValue] = useState([20, 80]); // Initial range values
+  const [value, setValue] = useState([20, 80]);
+  console.log("loginData", loginData);
+  console.log("jobs", jobs);
   const jobTypes = ["contract", "full-Time", "part - time"];
   const [filters, setFilters] = useState({
     title: "",
@@ -212,18 +215,45 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
     maxSalary: "",
     skills: [],
   });
+  const [isToggled, setIsToggled] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredJobs, setFilteredJobs] = useState(jobs);
   // Initialize with all jobs
-
+  useEffect(() => {}, [isToggled]);
   useEffect(() => handleApplyFilters(), []);
+  useEffect(() => {
+    const filteredAndSuggestedJobs = isToggled
+      ? suggestJobs(jobs, loginData.skills, 1)
+      : setFilteredJobs(jobs);
 
+    console.log(filteredAndSuggestedJobs);
+  }, [isToggled]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+  };
+  const suggestJobs = (jobs, seekerSkills, threshold) => {
+    // Filter jobs based on skills match
+    const suggestedJobs = jobs.filter((job) => {
+      console.log(job?.skills);
+      const jobSkills = job?.skills?.split(",").map((skill) => skill.trim());
+
+      // Calculate match score
+      const matchScore = jobSkills?.reduce((score, skill) => {
+        if (seekerSkills?.includes(skill)) {
+          return score + 1;
+        }
+        return score;
+      }, 0);
+
+      // Determine if match score exceeds threshold
+      return matchScore >= threshold;
+    });
+    setFilteredJobs(suggestedJobs);
   };
 
   const handleApplyFilters = () => {
@@ -245,6 +275,12 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
     // Update the filtered jobs state
     setFilteredJobs(filtered);
   };
+
+  const handleToggle = () => {
+    const newState = !isToggled;
+    setIsToggled(newState);
+    console.log(isToggled);
+  };
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
     setFilters((prevFilters) => ({
@@ -260,75 +296,118 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
   return (
     <div className="rend-comp-parent">
       <div className="left-panel">
-        <div className="filter-panel">
-          <div className="filter-title">
-            <p>Filters</p>
-          </div>
-          <div className="filter-panel-filters">
-            <TextField
-              label="Title"
-              name="title"
-              value={filters.title}
-              variant="standard"
-              onChange={handleFilterChange}
-              sx={{
-                width: "200px",
-                "& .MuiInputLabel-root": { color: "white" },
-                "& .MuiInputBase-input": { color: "white" },
-                "& .MuiInput-underline:before": { borderBottomColor: "white" },
-                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                  borderBottomColor: "white",
-                },
-                "& .MuiInput-underline:after": { borderBottomColor: "white" },
-                "& .MuiInputAdornment-root svg": { color: "white" },
-              }}
-            />
-            <TextField
-              label="Location"
-              name="location"
-              variant="standard"
-              value={filters.location}
-              onChange={handleFilterChange}
-              sx={{
-                width: "200px",
-                "& .MuiInputLabel-root": { color: "white" },
-                "& .MuiInputBase-input": { color: "white" },
-                "& .MuiInput-underline:before": { borderBottomColor: "white" },
-                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                  borderBottomColor: "white",
-                },
-                "& .MuiInput-underline:after": { borderBottomColor: "white" },
-                "& .MuiInputAdornment-root svg": { color: "white" },
-              }}
-            />
-            <Autocomplete
-              id="company-type"
-              options={jobTypes}
-              value={filters.type}
-              onChange={(event, newValue) => {
-                setFilters({
-                  ...filters,
-                  type: newValue,
-                });
-              }}
-              sx={{
-                width: "200px",
-                "& .MuiInputLabel-root": { color: "white" },
-                "& .MuiInputBase-input": { color: "white" },
-                "& .MuiInput-underline:before": { borderBottomColor: "white" },
-                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                  borderBottomColor: "white",
-                },
-                "& .MuiInput-underline:after": { borderBottomColor: "white" },
-                "& .MuiInputAdornment-root svg": { color: "white" },
-              }}
-              renderInput={(params) => (
+        <div>
+          <label>Suggest Jobs</label>
+          <Switch checked={isToggled} onChange={handleToggle} />
+        </div>
+        {!isToggled && (
+          <div className="filter-panel">
+            <div className="filter-title">
+              <p>Filters</p>
+            </div>
+            <div className="filter-panel-filters">
+              <TextField
+                label="Title"
+                name="title"
+                value={filters.title}
+                variant="standard"
+                onChange={handleFilterChange}
+                sx={{
+                  width: "200px",
+                  "& .MuiInputLabel-root": { color: "white" },
+                  "& .MuiInputBase-input": { color: "white" },
+                  "& .MuiInput-underline:before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                  "& .MuiInputAdornment-root svg": { color: "white" },
+                }}
+              />
+              <TextField
+                label="Location"
+                name="location"
+                variant="standard"
+                value={filters.location}
+                onChange={handleFilterChange}
+                sx={{
+                  width: "200px",
+                  "& .MuiInputLabel-root": { color: "white" },
+                  "& .MuiInputBase-input": { color: "white" },
+                  "& .MuiInput-underline:before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                  "& .MuiInputAdornment-root svg": { color: "white" },
+                }}
+              />
+              <Autocomplete
+                id="company-type"
+                options={jobTypes}
+                value={filters.type}
+                onChange={(event, newValue) => {
+                  setFilters({
+                    ...filters,
+                    type: newValue,
+                  });
+                }}
+                sx={{
+                  width: "200px",
+                  "& .MuiInputLabel-root": { color: "white" },
+                  "& .MuiInputBase-input": { color: "white" },
+                  "& .MuiInput-underline:before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottomColor: "white",
+                  },
+                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
+                  "& .MuiInputAdornment-root svg": { color: "white" },
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Job Type"
+                    variant="standard"
+                    sx={{
+                      width: "200px",
+                      "& .MuiInputLabel-root": { color: "white" },
+                      "& .MuiInputBase-input": { color: "white" },
+                      "& .MuiInput-underline:before": {
+                        borderBottomColor: "white",
+                      },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                        borderBottomColor: "white",
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottomColor: "white",
+                      },
+                      "& .MuiInputAdornment-root svg": { color: "white" },
+                    }}
+                  />
+                )}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "20px",
+                  marginTop: "20px",
+                }}
+              >
                 <TextField
-                  {...params}
-                  label="Job Type"
+                  label="Min Salary"
+                  name="minSalary"
                   variant="standard"
+                  value={filters.minSalary}
+                  onChange={handleFilterChange}
                   sx={{
-                    width: "200px",
+                    width: "90px",
                     "& .MuiInputLabel-root": { color: "white" },
                     "& .MuiInputBase-input": { color: "white" },
                     "& .MuiInput-underline:before": {
@@ -343,44 +422,37 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
                     "& .MuiInputAdornment-root svg": { color: "white" },
                   }}
                 />
-              )}
-            />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "20px",
-                marginTop: "20px",
-              }}
-            >
+                <TextField
+                  label="Max Salary"
+                  name="maxSalary"
+                  variant="standard"
+                  value={filters.maxSalary}
+                  onChange={handleFilterChange}
+                  sx={{
+                    width: "90px",
+                    "& .MuiInputLabel-root": { color: "white" },
+                    "& .MuiInputBase-input": { color: "white" },
+                    "& .MuiInput-underline:before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "white",
+                    },
+                    "& .MuiInputAdornment-root svg": { color: "white" },
+                  }}
+                />
+              </div>
               <TextField
-                label="Min Salary"
-                name="minSalary"
+                label="Skills"
+                name="skills"
                 variant="standard"
-                value={filters.minSalary}
+                value={filters.skills.join(",")}
                 onChange={handleFilterChange}
                 sx={{
-                  width: "90px",
-                  "& .MuiInputLabel-root": { color: "white" },
-                  "& .MuiInputBase-input": { color: "white" },
-                  "& .MuiInput-underline:before": {
-                    borderBottomColor: "white",
-                  },
-                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                    borderBottomColor: "white",
-                  },
-                  "& .MuiInput-underline:after": { borderBottomColor: "white" },
-                  "& .MuiInputAdornment-root svg": { color: "white" },
-                }}
-              />
-              <TextField
-                label="Max Salary"
-                name="maxSalary"
-                variant="standard"
-                value={filters.maxSalary}
-                onChange={handleFilterChange}
-                sx={{
-                  width: "90px",
+                  width: "200px",
                   "& .MuiInputLabel-root": { color: "white" },
                   "& .MuiInputBase-input": { color: "white" },
                   "& .MuiInput-underline:before": {
@@ -394,46 +466,29 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
                 }}
               />
             </div>
-            <TextField
-              label="Skills"
-              name="skills"
-              variant="standard"
-              value={filters.skills.join(",")}
-              onChange={handleFilterChange}
-              sx={{
-                width: "200px",
-                "& .MuiInputLabel-root": { color: "white" },
-                "& .MuiInputBase-input": { color: "white" },
-                "& .MuiInput-underline:before": { borderBottomColor: "white" },
-                "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                  borderBottomColor: "white",
-                },
-                "& .MuiInput-underline:after": { borderBottomColor: "white" },
-                "& .MuiInputAdornment-root svg": { color: "white" },
-              }}
-            />
+            <div>
+              <Button
+                variant="contained"
+                onClick={handleApplyFilters}
+                style={{
+                  marginTop: "20px",
+                  borderRadius: "20px",
+                  height: "30px",
+                  width: "130px",
+                  padding: "0",
+                }}
+              >
+                Apply Filters
+              </Button>
+            </div>
           </div>
-          <div>
-            <Button
-              variant="contained"
-              onClick={handleApplyFilters}
-              style={{
-                marginTop: "20px",
-                borderRadius: "20px",
-                height: "30px",
-                width: "130px",
-                padding: "0",
-              }}
-            >
-              Apply Filters
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
       <div className="render-comp">
         <div>
-          <h2>Jobs Posted</h2>
+          <h2 style={{ color: "white" }}>Jobs </h2>
         </div>
+
         {filteredJobs.length !== 0 ? (
           paginatedData.map((job, index) => (
             <JobCardJS

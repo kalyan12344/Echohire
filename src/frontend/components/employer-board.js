@@ -1,6 +1,6 @@
 // kalyan
 import React, { useState, useEffect } from "react";
-import { Button, Card, TextField } from "@mui/material";
+import { Button, TextField, Card, MenuItem, Menu } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Modal from "@mui/material/Modal";
@@ -12,6 +12,8 @@ import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import "../styling/employer-board.css";
 import JobPostform from "./job-post";
 import JobCardList from "./jobs";
+import CloseIcon from "@mui/icons-material/Close";
+
 import { Drawer } from "@mui/material";
 // import Button from "@mui/material/Button";
 import List from "@mui/material/List";
@@ -24,6 +26,7 @@ import EmployerDashboard from "./employer-dashboard";
 
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import { useLocation } from "react-router-dom";
 import { TextArea } from "@buildo/bento-design-system";
@@ -33,6 +36,18 @@ const EmployerBoard = () => {
   const { loginCompanyData } = location.state;
   console.log(loginCompanyData);
   const [value, setValue] = useState(0);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openHam = Boolean(anchorEl);
+  const handleClickHam = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleLogout = () => {
+    navigate(`/`);
+  };
+
+  const handleCloseHam = () => {
+    setAnchorEl(null);
+  };
   // const { username } = useParams();
   // const [open, setOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -310,22 +325,74 @@ const EmployerBoard = () => {
           </Drawer>
         </div>
         <div>
-          <Button
-            onClick={openIssueBox}
-            variant="contained"
-            sx={{
-              borderRadius: "30px",
-              backgroundColor: "rgba(255, 0, 0, 0.75)",
-              "&:hover": {
-                backgroundColor: "rgba(255, 0, 0, 1)",
+          <div>
+            {false ? (
+              <CloseIcon
+                onClick={handleCloseHam}
+                sx={{ transform: "translateY(10px)" }}
+                aria-controls={openHam ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openHam ? "true" : undefined}
+              />
+            ) : (
+              <MenuIcon
+                onClick={handleClickHam}
+                sx={{ transform: "translateY(10px)" }}
+                aria-controls={openHam ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openHam ? "true" : undefined}
+              />
+            )}
+          </div>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={openHam}
+            onClose={handleCloseHam}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+            PaperProps={{
+              sx: {
+                backgroundColor: "black",
+                boxShadow: "rgba(0,0,0,0.25)",
               },
             }}
-            style={{
-              color: "white",
-            }}
           >
-            RAISE AN ISSUE
-          </Button>
+            <MenuItem>
+              <Button
+                onClick={openIssueBox}
+                variant="contained"
+                sx={{
+                  borderRadius: "30px",
+                  backgroundColor: "rgba(255, 0, 0, 0.75)",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 0, 0, 1)",
+                  },
+                }}
+                style={{
+                  color: "white",
+                }}
+              >
+                RAISE AN ISSUE
+              </Button>
+            </MenuItem>
+            <MenuItem>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "rgba(255, 0, 0, 0.75)",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 0, 0, 1)",
+                  },
+                  borderRadius: "30px",
+                }}
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </MenuItem>
+          </Menu>
         </div>
       </div>
       {setIssueBoxOpen && (

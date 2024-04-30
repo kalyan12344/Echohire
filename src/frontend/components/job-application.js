@@ -50,6 +50,7 @@ const JobApplicationForm = ({}) => {
       );
       if (response.status === 200) {
         console.log("Applied successfully to the job");
+        navigate(`/employerboard`);
         // Redirect or show success message
       } else {
         console.error("Application failed");
@@ -73,6 +74,7 @@ const JobApplicationForm = ({}) => {
       console.log(response);
       if (response.status === 200) {
         console.log("job applied successfully");
+        navigate(`/jsboard`);
       } else if (response.status === 409) {
         console.log("409");
         // Open Snackbar when status is 409
@@ -82,7 +84,7 @@ const JobApplicationForm = ({}) => {
       const loginJsData = response.data.js;
       console.log(loginJsData, "loginData");
 
-      // navigate(`/jsboard`, { state: { loginJsData } });
+      navigate(`/jsboard`, { state: { loginJsData } });
     } catch (error) {
       if (error.message === "Request failed with status code 409") {
         console.log("409");

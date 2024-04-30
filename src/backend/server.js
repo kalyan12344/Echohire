@@ -24,6 +24,7 @@ const ApplicationFormRouter = require("./routes/job_application_form");
 const SavedJobRouter = require("./routes/saved-jobs");
 const EmailRouter = require("./routes/email");
 const WhoisRouter = require("./routes/whois");
+const InterviewExpRouter = require("./routes/interview_exp");
 
 app.use(employerRouter);
 // app.use(jobApplicationRouter);
@@ -33,5 +34,6 @@ app.use(ApplicationFormRouter);
 app.use(SavedJobRouter);
 app.use(EmailRouter);
 app.use(WhoisRouter);
+app.use(InterviewExpRouter);
 
 module.exports = app;

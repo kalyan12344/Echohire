@@ -205,7 +205,7 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
 const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
   const [value, setValue] = useState([20, 80]);
   console.log("loginData", loginData);
-  console.log("jobs", jobs);
+  // console.log("jobs", jobs);
   const jobTypes = ["contract", "full-Time", "part - time"];
   const [filters, setFilters] = useState({
     title: "",
@@ -216,12 +216,41 @@ const JobCardListJS = ({ jobs, loginData, onJobApply }) => {
     skills: [],
   });
   const [isToggled, setIsToggled] = useState(false);
+  // const [jobs, setJobData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredJobs, setFilteredJobs] = useState(jobs);
   // Initialize with all jobs
   useEffect(() => {}, [isToggled]);
-  useEffect(() => handleApplyFilters(), []);
+  useEffect(() => {
+    handleApplyFilters();
+    // getJobs();
+  }, []);
+  // const getJobs = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:5001/api/jsjobs`,
+
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log(response.data);
+  //       setJobData(response.data.jobs);
+  //       console.log("Jobs Applied :", response.data);
+  //       // Handle the fetched jobs data here
+  //     } else {
+  //       console.error("Failed to fetch jobs");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching jobs:", error);
+  //   }
+  // };
+
   useEffect(() => {
     const filteredAndSuggestedJobs = isToggled
       ? suggestJobs(jobs, loginData.skills, 1)

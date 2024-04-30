@@ -1,9 +1,32 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, Card, CardContent } from "@mui/material";
 import "../styling/landing.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const LandingPage = () => {
+  const [experiences, setExperiences] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5001/api/interview-experiences"
+        );
+        setExperiences(response.data);
+      } catch (error) {
+        console.error("Error fetching interview experiences:", error);
+        setError("Failed to fetch interview experiences");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
   return (
     <div>
       {/* Navbar */}
@@ -59,15 +82,29 @@ const LandingPage = () => {
         </section>
         <section className="interview-experience-section">
           <h2>Interview Experiences</h2>
-          <div className="interview">
-            <h3>Interview Experience 1</h3>
-            <p>Description of Interview Experience 1...</p>
-          </div>
-          <div className="interview">
-            <h3>Interview Experience 2</h3>
-            <p>Description of Interview Experience 2...</p>
-          </div>
-          {/* Add more interview experiences as needed */}
+          {loading ? (
+            <div>Loading experiences...</div>
+          ) : error ? (
+            <div>Error: {error}</div>
+          ) : (
+            <div>
+              {experiences.map((experience, index) => (
+                <Card
+                  key={index}
+                  sx={{
+                    width: "300px",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    color: "white",
+                  }}
+                >
+                  <CardContent>
+                    <h3>{experience.companyName}</h3>
+                    <p>{experience.experience}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </section>
       </div>
 

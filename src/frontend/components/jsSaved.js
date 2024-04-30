@@ -111,17 +111,34 @@ const JobCardJS = ({ jobData, loginData, onJobApply }) => {
   );
 };
 
-const SavedJobs = ({ savedJobs }) => {
+const SavedJobs = ({ loginJsData }) => {
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [savedJobs, setSavedJobs] = useState([]);
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-
+  useEffect(() => {
+    fetchSavedJobs();
+  });
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageCount = Math.ceil(savedJobs.length / ITEMS_PER_PAGE);
   const paginatedData = savedJobs.slice(offset, offset + ITEMS_PER_PAGE);
+  const fetchSavedJobs = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/api/saved-jobs/${loginJsData._id}`
+      );
 
+      if (response.status === 200) {
+        console.log(response);
+        setSavedJobs(response.data.savedJobs);
+      } else {
+        console.error("Failed to fetch saved jobs");
+      }
+    } catch (error) {
+      console.error("Error fetching saved jobs:", error);
+    }
+  };
   return (
     <div className="rend-comp-parent">
       <div className="left-panel">

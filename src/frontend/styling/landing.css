@@ -51,6 +51,9 @@ body {
 
 /* Interview Experience Section Styles */
 .interview-experience-section {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
   margin-top: 50px;
 }
 

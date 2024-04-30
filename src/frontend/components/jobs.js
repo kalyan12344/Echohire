@@ -114,7 +114,7 @@ const JobCard = ({ jobData, onDelete, onUpdate }) => {
   return (
     <div>
       <Card
-        onClick={handleOpen}
+        // onClick={handleOpen}
         className="job-card"
         style={{
           backgroundColor: "#202020cc",
@@ -216,7 +216,7 @@ const JobCardList = ({ username, jobs }) => {
     // Update the filtered jobs state
     setFilteredJobs(filtered);
   };
-
+  useEffect(() => {}, []);
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
     setFilters((prevFilters) => ({

@@ -18,7 +18,8 @@ import FolderDeleteIcon from "@mui/icons-material/FolderDelete";
 import { ShareSharp } from "@mui/icons-material";
 
 const ITEMS_PER_PAGE = 4;
-const JobCard = ({ jobData, onWithdrawApplication }) => {
+const JobCard = ({ jobData, onWithdrawApplication, loginJsData }) => {
+  console.log(loginJsData);
   const statusColor = {
     Applied: "white",
     InConsideration: "green",
@@ -30,6 +31,16 @@ const JobCard = ({ jobData, onWithdrawApplication }) => {
   const [companyName, setCompanyName] = useState("");
   const [interviewExperience, setInterviewExperience] = useState("");
 
+  const [formData, setFormData] = useState({
+    companyName: "",
+    jobSeekerName: loginJsData.firstName,
+    experience: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -38,13 +49,24 @@ const JobCard = ({ jobData, onWithdrawApplication }) => {
     setOpen(false);
   };
 
-  const handleSubmit = () => {
-    // Do something with companyName and interviewExperience data
-    console.log("Company Name:", companyName);
-    console.log("Interview Experience:", interviewExperience);
-    // Reset the fields after submission if needed
-    setCompanyName("");
-    setInterviewExperience("");
+  const handleSubmit = async () => {
+    console.log(formData);
+    // e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/api/interview-experiences",
+        {
+          companyName: formData.companyName,
+          jobSeekerName: formData.jobSeekerName,
+          experience: formData.experience,
+        }
+      );
+      console.log("Response:", response.data);
+      // Optionally, you can handle success message or redirect to another page
+    } catch (error) {
+      console.error("Error:", error.response.data);
+      // Optionally, you can display an error message to the user
+    }
     handleClose();
   };
 
@@ -52,18 +74,20 @@ const JobCard = ({ jobData, onWithdrawApplication }) => {
     <Box sx={{ width: 500, bgcolor: "background.paper", p: 2 }}>
       <h2>Interview Experience</h2>
       <TextField
-        label="Company Name"
+        label="companyName"
+        name="companyName"
         variant="outlined"
-        value={companyName}
-        onChange={(e) => setCompanyName(e.target.value)}
+        value={formData.companyName}
+        onChange={handleChange}
         fullWidth
         sx={{ mb: 1 }}
       />
       <TextField
-        label="Interview Experience"
+        label="experience"
+        name="experience"
         variant="outlined"
-        value={interviewExperience}
-        onChange={(e) => setInterviewExperience(e.target.value)}
+        value={formData.experience}
+        onChange={handleChange}
         fullWidth
         multiline
         rows={4}
@@ -158,40 +182,63 @@ const JobCard = ({ jobData, onWithdrawApplication }) => {
   );
 };
 
-const MyApplications = ({ applications }) => {
+const MyApplications = ({ loginJsData }) => {
+  const [applications, setJobApplications] = useState([]);
   console.log(applications);
   const [totApplications, setApplications] = useState(...applications);
   console.log(applications);
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    getAppliedJobs();
+  }, [applications]);
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
-  const handleWithdrawApplication = async (applicationId) => {
-    console.log(applicationId);
 
+  const getAppliedJobs = async () => {
     try {
-      // Make a DELETE request to the API endpoint with the application ID
+      const response = await axios.get(
+        `http://localhost:5001/api/applications/${loginJsData._id}`,
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+        console.log("Jobs fetched successfully:", response.data.applications);
+        setJobApplications(response.data.applications);
+        // Handle the fetched jobs data here
+      } else {
+        console.error("Failed to fetch jobs");
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    }
+  };
+
+  const handleWithdrawApplication = async (applicationId) => {
+    try {
       const response = await axios.delete(
         `http://localhost:5001/api/applications/${applicationId}`
       );
 
-      // If the request is successful (status code 200-299), return true
       if (response.status >= 200 && response.status < 300) {
+        // Update state after successful deletion
         const updatedApplications = totApplications.filter(
           (app) => app._id !== applicationId
         );
-        setApplications(updatedApplications);
-        return true;
+        setJobApplications(updatedApplications);
       } else {
-        // Handle unsuccessful request
         console.error("Failed to delete application:", response.statusText);
-        return false;
       }
     } catch (error) {
-      // Handle errors
       console.error("Error deleting application:", error.message);
-      return false;
     }
   };
 
@@ -222,6 +269,7 @@ const MyApplications = ({ applications }) => {
               key={job._id}
               jobData={job}
               onWithdrawApplication={handleWithdrawApplication}
+              loginJsData={loginJsData}
             />
           ))
         ) : (

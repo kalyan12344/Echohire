@@ -111,13 +111,19 @@ const EmployerDashboard = ({ loginCompanyData, jobs }) => {
           </div>
         </div>
         <div class="grid6">
-          <div className="innner-box">6</div>
+          <div className="innner-box">
+            <p>TBD</p>
+          </div>
         </div>
         <div class="grid7">
-          <div className="innner-box">7</div>
+          <div className="innner-box">
+            <div>TBD</div>
+          </div>
         </div>
         <div class="grid8">
-          <div className="innner-box">8</div>
+          <div className="innner-box">
+            <div>TBD</div>
+          </div>
         </div>
       </div>
     </div>

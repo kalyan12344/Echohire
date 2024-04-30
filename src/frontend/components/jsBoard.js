@@ -209,11 +209,14 @@ const JsBoard = () => {
       case 2:
         return (
           <div>
-            <MyApplications applications={jobApplications} />
+            <MyApplications
+              applications={jobApplications}
+              loginJsData={loginJsData}
+            />
           </div>
         );
       case 3:
-        return <SavedJobs savedJobs={savedJobs} />;
+        return <SavedJobs savedJobs={savedJobs} loginJsData={loginJsData} />;
 
       case 4:
         return <JsProfile loginData={loginJsData} username={username} />;
@@ -310,7 +313,7 @@ const JsBoard = () => {
         </div>
         <div>
           <div>
-            {openHam ? (
+            {false ? (
               <CloseIcon
                 onClick={handleCloseHam}
                 sx={{ transform: "translateY(10px)" }}
@@ -338,8 +341,8 @@ const JsBoard = () => {
             }}
             PaperProps={{
               sx: {
-                backgroundColor: "black", // Set background color to transparent
-                boxShadow: "rgba(0,0,0,0.25)", // Remove box shadow
+                backgroundColor: "black",
+                boxShadow: "rgba(0,0,0,0.25)",
               },
             }}
           >
